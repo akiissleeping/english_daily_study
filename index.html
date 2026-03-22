@@ -225,6 +225,38 @@
     .audio-player { display:flex; align-items:center; gap:10px; padding: 12px 16px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); margin-top: 10px; }
     .audio-icon { font-size: 1.2rem; }
 
+    /* TTS / Speech */
+    .speak-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:28px; height:28px; border-radius:50%;
+      border: 1.5px solid var(--primary-light); background: #eef2ff;
+      color: var(--primary); cursor:pointer; font-size:.85rem;
+      transition: all .2s; flex-shrink:0; padding:0;
+    }
+    .speak-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .speak-btn.speaking { background: var(--primary); color: white; animation: pulse .8s ease infinite; }
+    .speak-btn-lg {
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 8px 16px; border-radius:8px;
+      border: 2px solid var(--primary-light); background: #eef2ff;
+      color: var(--primary); cursor:pointer; font-size:.85rem; font-weight:600;
+      transition: all .2s;
+    }
+    .speak-btn-lg:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .speak-btn-lg.speaking { background: var(--primary); color: white; animation: pulse .8s ease infinite; }
+
+    .script-player { background: var(--surface2); border-radius:12px; padding:14px; border:1px solid var(--border); margin-bottom:14px; }
+    .script-player-controls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+    .player-btn { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; border:none; cursor:pointer; font-size:1rem; transition:all .2s; }
+    .player-btn.play { background:var(--primary); color:white; }
+    .player-btn.play:hover { background:var(--primary-dark); }
+    .player-btn.stop { background:var(--surface); color:var(--text-muted); border:1px solid var(--border); }
+    .player-btn.stop:hover { background:var(--surface2); }
+    .speed-select { padding:4px 8px; border-radius:6px; border:1px solid var(--border); font-size:.78rem; font-weight:600; color:var(--text); background:var(--surface); cursor:pointer; }
+    .player-label { font-size:.78rem; color:var(--text-muted); }
+    .sentence-highlight { background:#fde68a; border-radius:3px; padding:1px 2px; transition:background .3s; }
+    .script-sentences { font-size:.88rem; line-height:1.9; color:var(--text); }
+
     /* Dictation */
     .dictation-area { width:100%; min-height: 80px; padding: 12px; border-radius: 8px; border: 2px solid var(--border); font-family: inherit; font-size: .9rem; resize: vertical; outline:none; transition: border-color .2s; }
     .dictation-area:focus { border-color: var(--primary); }
@@ -1008,6 +1040,120 @@ function Quiz({ questions, onComplete }) {
   );
 }
 
+// ===== SPEECH UTILS =====
+function useSpeech() {
+  const [speaking, setSpeaking] = useState(false);
+  const [currentIdx, setCurrentIdx] = useState(-1);
+  const utterRef = useRef(null);
+
+  const stop = useCallback(() => {
+    window.speechSynthesis.cancel();
+    setSpeaking(false);
+    setCurrentIdx(-1);
+  }, []);
+
+  // Play array of sentences one by one, calling onSentence(i) on each
+  const playSentences = useCallback((sentences, rate, onSentence) => {
+    window.speechSynthesis.cancel();
+    let idx = 0;
+    const next = () => {
+      if (idx >= sentences.length) { setSpeaking(false); setCurrentIdx(-1); return; }
+      const u = new SpeechSynthesisUtterance(sentences[idx]);
+      u.lang = 'en-US';
+      u.rate = rate || 0.9;
+      u.onstart = () => { setSpeaking(true); setCurrentIdx(idx); onSentence && onSentence(idx); };
+      u.onend = () => { idx++; next(); };
+      u.onerror = () => { setSpeaking(false); setCurrentIdx(-1); };
+      utterRef.current = u;
+      window.speechSynthesis.speak(u);
+    };
+    next();
+  }, []);
+
+  const speakText = useCallback((text, rate) => {
+    const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
+    playSentences(sentences.map(s => s.trim()).filter(Boolean), rate || 0.9, null);
+  }, [playSentences]);
+
+  return { speaking, currentIdx, stop, speakText, playSentences };
+}
+
+// Single word/phrase speak (stateless, no hook needed)
+function SpeakBtn({ text, small = true }) {
+  const [active, setActive] = useState(false);
+  const speak = () => {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85;
+    u.onstart = () => setActive(true);
+    u.onend = () => setActive(false);
+    u.onerror = () => setActive(false);
+    window.speechSynthesis.speak(u);
+  };
+  if (small) {
+    return <button className={`speak-btn ${active ? 'speaking' : ''}`} onClick={e => { e.stopPropagation(); speak(); }} title="音声を聞く">🔊</button>;
+  }
+  return <button className={`speak-btn-lg ${active ? 'speaking' : ''}`} onClick={speak}>🔊 {active ? '再生中...' : '音声を聞く'}</button>;
+}
+
+// Full script player with sentence highlighting
+function ScriptPlayer({ script, label = 'スクリプトを聞く' }) {
+  const [rate, setRate] = useState(0.85);
+  const { speaking, currentIdx, stop, playSentences } = useSpeech();
+  const [sentences, setSentences] = useState([]);
+
+  useEffect(() => {
+    const s = script.match(/[^.!?]+[.!?]*/g) || [script];
+    setSentences(s.map(x => x.trim()).filter(Boolean));
+  }, [script]);
+
+  const play = () => {
+    if (speaking) { stop(); return; }
+    playSentences(sentences, rate, null);
+  };
+
+  const playSingle = (i) => {
+    stop();
+    setTimeout(() => {
+      const u = new SpeechSynthesisUtterance(sentences[i]);
+      u.lang = 'en-US'; u.rate = rate;
+      window.speechSynthesis.speak(u);
+    }, 50);
+  };
+
+  return (
+    <div className="script-player">
+      <div className="script-player-controls">
+        <button className={`player-btn play`} onClick={play} title={speaking ? '停止' : '再生'}>
+          {speaking ? '⏹' : '▶'}
+        </button>
+        <span className="player-label">{speaking ? '再生中...' : label}</span>
+        <select className="speed-select" value={rate} onChange={e => { stop(); setRate(parseFloat(e.target.value)); }}>
+          <option value={0.7}>遅い (0.7x)</option>
+          <option value={0.85}>普通 (0.85x)</option>
+          <option value={1.0}>速い (1.0x)</option>
+          <option value={1.2}>最速 (1.2x)</option>
+        </select>
+      </div>
+      <div className="script-sentences">
+        {sentences.map((s, i) => (
+          <span key={i}>
+            <span
+              className={currentIdx === i ? 'sentence-highlight' : ''}
+              style={{ cursor: 'pointer' }}
+              onClick={() => playSingle(i)}
+              title="この文を再生"
+            >{s}</span>{' '}
+          </span>
+        ))}
+      </div>
+      <div style={{ fontSize: '.72rem', color: 'var(--text-light)', marginTop: '6px' }}>
+        💡 各文をクリックして個別に再生できます
+      </div>
+    </div>
+  );
+}
+
 // ===== VOCAB SECTION =====
 function VocabSection({ data }) {
   const [expanded, setExpanded] = useState(null);
@@ -1025,10 +1171,13 @@ function VocabSection({ data }) {
           {data.vocabulary.map((v, i) => (
             <div key={i} className={`vocab-item ${expanded === i ? 'expanded' : ''}`}
               onClick={() => setExpanded(expanded === i ? null : i)}>
-              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                <div>
-                  <span className="vocab-word">{v.word}</span>
-                  <span className="vocab-phonetic"> {v.phonetic}</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', flex:1 }}>
+                  <SpeakBtn text={v.word} />
+                  <div>
+                    <span className="vocab-word">{v.word}</span>
+                    <span className="vocab-phonetic"> {v.phonetic}</span>
+                  </div>
                 </div>
                 <span style={{ color: 'var(--text-light)', fontSize: '.8rem' }}>{expanded === i ? '▲' : '▼'}</span>
               </div>
@@ -1036,7 +1185,10 @@ function VocabSection({ data }) {
               {expanded === i && (
                 <div className="animate-pop">
                   <div className="vocab-meaning">🇯🇵 {v.meaning}</div>
-                  <div className="vocab-example">"{v.example}"</div>
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginTop:'6px' }}>
+                    <SpeakBtn text={v.example} />
+                    <div className="vocab-example">"{v.example}"</div>
+                  </div>
                   <div className="vocab-example-ja">→ {v.exampleJa}</div>
                 </div>
               )}
@@ -1080,12 +1232,16 @@ function ListeningSection({ data }) {
     <div className="fade-in">
       <Timer totalSeconds={300} />
       <div className="card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '12px' }}>
           <div className="card-title" style={{ margin: 0 }}><span>🎧</span> {l.title}</div>
           <span className={`level-badge level-${l.level.toLowerCase()}`}>{l.level}</span>
         </div>
+        <ScriptPlayer
+          script={l.parts.map(p => p.blank ? p.blank.answer : p.text).join('')}
+          label="ニュースを聞く（穴埋め前に聞いて内容をつかもう）"
+        />
         <p style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
-          空欄に入る英単語を入力してください。ヒントを参考にしましょう。
+          ↑ まず音声を聞いてから、空欄に入る英単語を入力してください。
         </p>
         <div className="script-display">
           {l.parts.map((part, i) => {
@@ -1314,19 +1470,29 @@ function TrainingSection({ data }) {
 
         <div className="divider" />
 
-        {!hideScript && (
+        {/* Step 0: リピーティング — 音声再生 + スクリプト */}
+        {step === 0 && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)' }}>📄 スクリプト</div>
-              {step === 4 && <span style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>シャドーイングでは不使用</span>}
-            </div>
+            <ScriptPlayer script={t.script} label="1文ずつ聞いて繰り返してみよう" />
+            <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)', margin: '10px 0 6px' }}>📄 スクリプト（参照用）</div>
             <div className="script-display">{t.script}</div>
           </div>
         )}
 
-        {showDictation && (
+        {/* Step 1: 音読 — スクリプト表示 */}
+        {step === 1 && (
           <div>
-            <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)', marginBottom: '10px' }}>✍️ 書き起こし</div>
+            <ScriptPlayer script={t.script} label="音読のペースを確認しよう" />
+            <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)', margin: '10px 0 6px' }}>📄 スクリプト（音読する）</div>
+            <div className="script-display">{t.script}</div>
+          </div>
+        )}
+
+        {/* Step 2: ディクテーション — 音声のみ、スクリプト隠す */}
+        {step === 2 && (
+          <div>
+            <ScriptPlayer script={t.script} label="聞き取って書き起こそう（スクリプト非表示）" />
+            <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)', margin: '10px 0 6px' }}>✍️ 書き起こし</div>
             <textarea
               className="dictation-area"
               placeholder="聞こえた英語をここに書いてください..."
@@ -1346,10 +1512,28 @@ function TrainingSection({ data }) {
           </div>
         )}
 
-        {hideScript && step === 4 && (
-          <div className="script-display" style={{ filter: 'blur(4px)', cursor: 'pointer', userSelect: 'none' }}
-            onClick={e => e.currentTarget.style.filter = 'none'}>
-            {t.script}<br/><span style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>(クリックでスクリプト確認)</span>
+        {/* Step 3: オーバーラッピング — 音声+スクリプト同時 */}
+        {step === 3 && (
+          <div>
+            <ScriptPlayer script={t.script} label="音声に重ねて声を出して読もう" />
+            <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)', margin: '10px 0 6px' }}>📄 スクリプト（見ながら読む）</div>
+            <div className="script-display">{t.script}</div>
+          </div>
+        )}
+
+        {/* Step 4: シャドーイング — 音声のみ、スクリプトは隠す */}
+        {step === 4 && (
+          <div>
+            <ScriptPlayer script={t.script} label="音声を聞きながら直後に続いて発話しよう" />
+            <div
+              className="script-display"
+              style={{ filter: 'blur(5px)', cursor: 'pointer', userSelect: 'none', transition: 'filter .3s' }}
+              onClick={e => e.currentTarget.style.filter = 'none'}
+              title="クリックでスクリプト表示"
+            >
+              {t.script}
+              <div style={{ fontSize: '.75rem', color: 'var(--text-muted)', marginTop: '6px' }}>(クリックでスクリプト確認)</div>
+            </div>
           </div>
         )}
 
