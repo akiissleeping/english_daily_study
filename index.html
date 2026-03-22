@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily English - 毎日15分英語学習</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #818cf8;
+      --primary-dark: #3730a3;
+      --secondary: #0ea5e9;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface2: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+      --shadow-lg: 0 10px 40px rgba(0,0,0,.12);
+    }
+    body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    #root { min-height: 100vh; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface2); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Animations */
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
+    @keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+    @keyframes pop { 0% { transform:scale(0.8); opacity:0; } 60% { transform:scale(1.1); } 100% { transform:scale(1); opacity:1; } }
+    @keyframes timerPulse { 0%,100% { opacity:1; } 50% { opacity:.6; } }
+
+    .fade-in { animation: fadeIn .3s ease; }
+    .animate-pop { animation: pop .4s ease; }
+
+    /* Layout */
+    .app-container { max-width: 820px; margin: 0 auto; padding: 0 16px 40px; }
+
+    /* Header */
+    .app-header {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #0ea5e9 100%);
+      padding: 20px 24px;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(79,70,229,.3);
+    }
+    .header-inner { max-width: 820px; margin: 0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .header-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
+    .header-date { font-size: .8rem; opacity: .85; margin-top: 2px; }
+    .header-streak { background: rgba(255,255,255,.2); border-radius: 20px; padding: 6px 14px; font-size: .85rem; font-weight: 600; display:flex; align-items:center; gap:6px; }
+
+    /* Section Tabs */
+    .section-tabs { display:flex; gap:6px; margin: 20px 0 16px; overflow-x:auto; padding-bottom: 2px; }
+    .section-tabs::-webkit-scrollbar { height: 0; }
+    .tab-btn {
+      display:flex; align-items:center; gap:8px; padding: 10px 16px;
+      border-radius: 10px; border: 2px solid var(--border);
+      background: var(--surface); color: var(--text-muted);
+      cursor:pointer; font-size: .85rem; font-weight: 500;
+      transition: all .2s; white-space:nowrap; flex-shrink: 0;
+    }
+    .tab-btn:hover { border-color: var(--primary-light); color: var(--primary); background: #eef2ff; }
+    .tab-btn.active {
+      border-color: var(--primary); background: var(--primary);
+      color: white; box-shadow: 0 4px 12px rgba(79,70,229,.3);
+    }
+    .tab-btn .tab-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(255,255,255,.25); font-size: .7rem;
+      display:flex; align-items:center; justify-content:center; font-weight:700;
+    }
+    .tab-btn:not(.active) .tab-num { background: var(--surface2); color: var(--text-muted); }
+    .tab-btn.done .check { color: var(--success); }
+
+    /* Card */
+    .card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      padding: 20px; margin-bottom: 14px;
+    }
+    .card-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 16px; display:flex; align-items:center; gap:8px; }
+    .card-subtitle { font-size: .8rem; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+
+    /* Timer */
+    .timer-bar { display:flex; align-items:center; gap:12px; background: var(--surface); border-radius: 10px; padding: 12px 16px; border: 1px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow); }
+    .timer-display { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--primary); min-width: 70px; }
+    .timer-display.warning { color: var(--warning); animation: timerPulse 1s ease infinite; }
+    .timer-display.danger { color: var(--danger); animation: timerPulse .5s ease infinite; }
+    .timer-label { font-size: .8rem; color: var(--text-muted); }
+    .timer-progress { flex:1; height:6px; background: var(--surface2); border-radius: 3px; overflow:hidden; }
+    .timer-progress-fill { height:100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width .5s linear; }
+    .timer-btn { padding: 8px 14px; border-radius: 8px; border: none; cursor:pointer; font-size: .8rem; font-weight: 600; transition: all .2s; }
+    .timer-btn.start { background: var(--primary); color: white; }
+    .timer-btn.pause { background: var(--warning); color: white; }
+    .timer-btn.reset { background: var(--surface2); color: var(--text-muted); }
+    .timer-btn:hover { filter: brightness(1.1); }
+
+    /* Vocab */
+    .vocab-grid { display:grid; gap:10px; }
+    .vocab-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px; cursor:pointer; transition: all .2s; }
+    .vocab-item:hover { border-color: var(--primary-light); background: #eef2ff; }
+    .vocab-item.expanded { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.1); }
+    .vocab-word { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .vocab-phonetic { font-size: .8rem; color: var(--text-muted); margin-top: 2px; }
+    .vocab-meaning { font-size: .95rem; color: var(--text); font-weight: 600; margin-top: 8px; }
+    .vocab-example { font-size: .85rem; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+    .vocab-example-ja { font-size: .8rem; color: var(--text-light); margin-top: 3px; }
+    .vocab-tag { display:inline-block; padding: 2px 8px; border-radius: 12px; font-size: .7rem; font-weight: 600; background: #eef2ff; color: var(--primary); margin-right: 4px; }
+
+    /* Quiz */
+    .quiz-section { margin-top: 8px; }
+    .quiz-question { font-size: .9rem; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+    .quiz-options { display:grid; gap:8px; }
+    .quiz-opt {
+      padding: 10px 14px; border-radius: 8px; border: 2px solid var(--border);
+      background: var(--surface); cursor:pointer; font-size: .85rem;
+      transition: all .2s; text-align:left;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--primary-light); background: #eef2ff; }
+    .quiz-opt.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; }
+    .quiz-opt.wrong { border-color: var(--danger); background: #fef2f2; color: #7f1d1d; animation: shake .3s ease; }
+    .quiz-opt.disabled { cursor:default; }
+    .quiz-result { display:flex; align-items:center; gap:8px; padding: 10px 14px; border-radius: 8px; font-size: .85rem; font-weight: 600; margin-top: 10px; }
+    .quiz-result.correct { background: #ecfdf5; color: #065f46; }
+    .quiz-result.wrong { background: #fef2f2; color: #7f1d1d; }
+    .quiz-nav { display:flex; align-items:center; justify-content:space-between; margin-top: 14px; }
+    .quiz-progress { font-size: .8rem; color: var(--text-muted); }
+    .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor:pointer; font-size: .85rem; font-weight: 600; transition: all .2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: var(--surface2); color: var(--text); }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-success { background: var(--success); color: white; }
+    .btn:disabled { opacity: .5; cursor:not-allowed; }
+
+    /* Score */
+    .score-badge { display:inline-flex; align-items:center; gap:4px; padding: 4px 12px; border-radius: 20px; font-size: .8rem; font-weight: 700; }
+    .score-badge.good { background: #ecfdf5; color: #065f46; }
+    .score-badge.ok { background: #fffbeb; color: #78350f; }
+    .score-badge.bad { background: #fef2f2; color: #7f1d1d; }
+
+    /* Listening */
+    .script-display {
+      background: var(--surface2); border-radius: 10px; padding: 16px;
+      font-size: .9rem; line-height: 1.9; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .blank-input {
+      display:inline-block; border-bottom: 2px solid var(--primary);
+      min-width: 90px; padding: 0 4px; font-size: .9rem;
+      font-family: inherit; background: #eef2ff; border-radius: 4px 4px 0 0;
+      color: var(--text); outline:none; text-align:center;
+    }
+    .blank-input.correct { border-color: var(--success); background: #ecfdf5; }
+    .blank-input.wrong { border-color: var(--danger); background: #fef2f2; }
+    .blank-input:focus { background: #e0e7ff; }
+    .hint-text { font-size: .7rem; color: var(--text-light); display:block; text-align:center; }
+
+    /* Reading */
+    .reading-text {
+      background: var(--surface2); border-radius: 10px; padding: 18px;
+      font-size: .9rem; line-height: 1.9; color: var(--text);
+      border: 1px solid var(--border); white-space: pre-line;
+    }
+    .highlight { background: #fef3c7; border-radius: 3px; padding: 0 2px; }
+
+    /* Expression */
+    .expression-card { background: linear-gradient(135deg, #eef2ff, #e0e7ff); border-radius: 10px; padding: 14px; border: 1px solid #c7d2fe; }
+    .expression-text { font-size: .95rem; font-weight: 700; color: var(--primary-dark); }
+    .expression-usage { font-size: .75rem; color: var(--primary); font-weight: 600; margin-top: 4px; }
+    .expression-example { font-size: .8rem; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+
+    /* Training */
+    .step-tabs { display:flex; gap:6px; overflow-x:auto; padding-bottom: 2px; margin-bottom: 14px; }
+    .step-tab {
+      padding: 8px 14px; border-radius: 8px; border: 2px solid var(--border);
+      background: var(--surface); color: var(--text-muted); cursor:pointer;
+      font-size: .8rem; font-weight: 600; white-space:nowrap; flex-shrink:0;
+      transition: all .2s;
+    }
+    .step-tab.active { border-color: var(--primary); background: var(--primary); color: white; }
+    .step-tab.done { border-color: var(--success); color: var(--success); }
+    .step-badge { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,.25); font-size:.65rem; font-weight:700; margin-right:4px; }
+    .step-tab:not(.active) .step-badge { background: var(--surface2); color: var(--text-muted); }
+
+    .training-step { animation: fadeIn .3s ease; }
+    .step-title { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .step-instruction { font-size: .85rem; color: var(--text); line-height: 1.6; margin-bottom: 10px; padding: 12px; background: #eef2ff; border-radius: 8px; border-left: 3px solid var(--primary); }
+    .step-tip { font-size: .8rem; color: var(--text-muted); padding: 10px 12px; background: #fffbeb; border-radius: 8px; border-left: 3px solid var(--accent); }
+    .tip-label { font-weight: 700; color: var(--accent); }
+
+    .record-btn {
+      display:flex; align-items:center; gap:8px;
+      padding: 12px 20px; border-radius: 10px; border: 2px solid;
+      cursor:pointer; font-size: .9rem; font-weight: 600; transition: all .2s;
+    }
+    .record-btn.idle { border-color: var(--danger); color: var(--danger); background: var(--surface); }
+    .record-btn.idle:hover { background: #fef2f2; }
+    .record-btn.recording { border-color: var(--danger); background: var(--danger); color: white; animation: pulse 1s ease infinite; }
+    .record-dot { width:10px; height:10px; border-radius:50%; background:currentColor; }
+
+    .audio-player { display:flex; align-items:center; gap:10px; padding: 12px 16px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); margin-top: 10px; }
+    .audio-icon { font-size: 1.2rem; }
+
+    /* Dictation */
+    .dictation-area { width:100%; min-height: 80px; padding: 12px; border-radius: 8px; border: 2px solid var(--border); font-family: inherit; font-size: .9rem; resize: vertical; outline:none; transition: border-color .2s; }
+    .dictation-area:focus { border-color: var(--primary); }
+
+    /* Vocab List */
+    .vocab-list-item { display:flex; gap:8px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items:baseline; }
+    .vocab-list-item:last-child { border-bottom: none; }
+    .vocab-list-word { font-weight: 600; color: var(--primary); font-size: .85rem; min-width: 160px; }
+    .vocab-list-meaning { font-size: .85rem; color: var(--text-muted); }
+
+    /* Progress */
+    .progress-bar { height:4px; background: var(--surface2); border-radius: 2px; overflow:hidden; margin-top: 6px; }
+    .progress-fill { height:100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 2px; transition: width .4s ease; }
+
+    /* Day nav */
+    .day-nav { display:flex; align-items:center; gap:10px; margin-bottom: 16px; }
+    .day-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); cursor:pointer; font-size: .85rem; color: var(--text-muted); transition: all .2s; }
+    .day-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+    .day-btn:disabled { opacity:.4; cursor:not-allowed; }
+    .day-label { font-size: .85rem; font-weight: 600; color: var(--text); }
+
+    /* Complete banner */
+    .complete-banner { background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 12px; padding: 20px; text-align:center; margin-top: 16px; }
+    .complete-banner h3 { font-size: 1.2rem; font-weight: 700; }
+    .complete-banner p { font-size: .85rem; opacity: .9; margin-top: 6px; }
+
+    /* Badge */
+    .level-badge { display:inline-flex; align-items:center; padding: 3px 10px; border-radius: 20px; font-size: .7rem; font-weight: 700; }
+    .level-intermediate { background: #dbeafe; color: #1e40af; }
+    .level-advanced { background: #fce7f3; color: #9d174d; }
+
+    /* Section header */
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 16px; flex-wrap:wrap; gap:8px; }
+    .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text); display:flex; align-items:center; gap:8px; }
+    .section-icon { font-size: 1.2rem; }
+
+    /* Divider */
+    .divider { height:1px; background: var(--border); margin: 16px 0; }
+
+    /* Show answer */
+    .show-answer-row { display:flex; align-items:center; gap:10px; margin-top: 10px; }
+    .answer-text { font-size: .85rem; color: var(--success); font-weight: 600; }
+
+    /* Summary */
+    .summary-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; }
+    .summary-card { background: var(--surface2); border-radius: 10px; padding: 14px; text-align:center; border: 1px solid var(--border); }
+    .summary-num { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    .summary-label { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+
+    @media (max-width: 640px) {
+      .app-header { padding: 14px 16px; }
+      .header-title { font-size: 1rem; }
+      .card { padding: 14px; }
+      .tab-btn { padding: 8px 12px; font-size: .78rem; }
+      .timer-display { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ===== CONTENT DATA =====
+const CONTENT_DAYS = [
+  {
+    // Day 1
+    date_label: "Day 1",
+    topic: "日本の経済回復",
+    vocabulary: [
+      { word: "fiscal year", phonetic: "/ˈfɪskəl jɪr/", meaning: "会計年度", tags: ["経済"], example: "Japan's fiscal year runs from April to March.", exampleJa: "日本の会計年度は4月から3月です。" },
+      { word: "stimulus package", phonetic: "/ˈstɪmjʊləs ˈpækɪdʒ/", meaning: "景気刺激策", tags: ["経済","政治"], example: "The government announced a 30 trillion yen stimulus package.", exampleJa: "政府は30兆円の景気刺激策を発表しました。" },
+      { word: "stakeholder", phonetic: "/ˈsteɪkˌhoʊldər/", meaning: "利害関係者", tags: ["ビジネス"], example: "We need to inform all stakeholders of the decision.", exampleJa: "全ての利害関係者に決定を伝える必要があります。" },
+      { word: "sustainable growth", phonetic: "/səˈsteɪnəbəl ɡroʊθ/", meaning: "持続的な成長", tags: ["経済","ESG"], example: "The CEO emphasized the need for sustainable growth.", exampleJa: "CEOは持続的な成長の必要性を強調しました。" },
+      { word: "monetary policy", phonetic: "/ˈmɒnɪtəri ˈpɒlɪsi/", meaning: "金融政策", tags: ["経済"], example: "The Bank of Japan is reviewing its monetary policy.", exampleJa: "日本銀行は金融政策を見直しています。" },
+    ],
+    vocabQuiz: [
+      { q: "「会計年度」を英語で言うと？", opts: ["monetary policy", "fiscal year", "stimulus package", "stakeholder"], ans: 1 },
+      { q: "Which means '持続的な成長'?", opts: ["fiscal year", "monetary policy", "sustainable growth", "stakeholder"], ans: 2 },
+      { q: "Complete: 'The government announced a ___ to boost the economy.'", opts: ["fiscal year", "stakeholder", "stimulus package", "monetary policy"], ans: 2 },
+    ],
+    listening: {
+      title: "Japan's Economy Shows Signs of Recovery",
+      level: "Intermediate",
+      parts: [
+        { text: "Japan's economy is showing ", blank: null },
+        { text: "", blank: { id: 0, answer: "positive", hint: "(前向きな)" } },
+        { text: " signs of recovery following a period of slow growth. The government announced a new ", blank: null },
+        { text: "", blank: { id: 1, answer: "stimulus", hint: "(刺激)" } },
+        { text: " package worth 30 trillion yen to boost domestic ", blank: null },
+        { text: "", blank: { id: 2, answer: "consumption", hint: "(消費)" } },
+        { text: ". The unemployment rate has ", blank: null },
+        { text: "", blank: { id: 3, answer: "stabilized", hint: "(安定した)" } },
+        { text: " at around 2.5%, and major companies are reporting increased profits. Economists expect GDP growth to reach 1.5% this fiscal year, driven by strong exports in the automotive and ", blank: null },
+        { text: "", blank: { id: 4, answer: "technology", hint: "(技術)" } },
+        { text: " sectors. However, challenges remain including an aging population and the need for structural ", blank: null },
+        { text: "", blank: { id: 5, answer: "reforms", hint: "(改革)" } },
+        { text: " to improve productivity.", blank: null },
+      ],
+      quiz: [
+        { q: "How much is the new government package worth?", opts: ["20 trillion yen", "30 trillion yen", "40 trillion yen", "50 trillion yen"], ans: 1 },
+        { q: "What is the current unemployment rate?", opts: ["1.5%", "2.0%", "2.5%", "3.0%"], ans: 2 },
+        { q: "What remains a challenge for Japan?", opts: ["High inflation", "Low exports", "Aging population", "Strong yen"], ans: 2 },
+      ],
+      vocabList: [
+        { word: "domestic consumption", meaning: "国内消費" },
+        { word: "unemployment rate", meaning: "失業率" },
+        { word: "fiscal year", meaning: "会計年度" },
+        { word: "structural reforms", meaning: "構造改革" },
+        { word: "aging population", meaning: "高齢化社会" },
+      ],
+    },
+    reading: {
+      title: "Quarterly Business Review",
+      text: `Good morning, everyone. Thank you for joining our Q3 review. Let's begin with our financial performance. This quarter, revenue increased by 12% compared to last year, exceeding our initial projections. Our cost reduction initiatives have been particularly effective in the manufacturing division.
+
+Moving forward, I'd like to discuss our strategy for Q4. We need to focus on three key areas: market expansion, operational efficiency, and talent development. Our competitors have been aggressive in the Southeast Asian market, so we must accelerate our entry strategy.
+
+Regarding budget allocation, I propose shifting 15% of our marketing budget toward digital channels, as our analytics show significantly higher ROI. Does anyone have concerns about this approach?
+
+Finally, we plan to hire 50 additional engineers by year-end to support our product development roadmap.`,
+      vocabList: [
+        { word: "quarterly review", meaning: "四半期レビュー" },
+        { word: "revenue", meaning: "収益・売上" },
+        { word: "projections", meaning: "予測・見込み" },
+        { word: "operational efficiency", meaning: "業務効率" },
+        { word: "ROI", meaning: "投資対効果" },
+        { word: "roadmap", meaning: "計画・ロードマップ" },
+      ],
+      grammar: {
+        point: "数値＋比較表現のパターン",
+        explain: "ビジネス英語では数値と比較を組み合わせた表現が頻出。'increased by 12%'（12%増）、'compared to last year'（前年比）、'exceeding projections'（予測超過）のパターンを押さえよう。",
+        examples: ["Revenue increased by 12% compared to last year.", "Costs exceeded our initial projections.", "We propose shifting 15% of the budget."],
+      },
+      quiz: [
+        { q: "How much did revenue increase?", opts: ["10%", "12%", "15%", "20%"], ans: 1 },
+        { q: "Which market is most competitive?", opts: ["Europe", "North America", "Southeast Asia", "China"], ans: 2 },
+        { q: "How many engineers will be hired?", opts: ["30", "40", "50", "60"], ans: 2 },
+      ],
+      expressions: [
+        { expr: "Moving forward, I'd like to discuss...", usage: "話題を次に進める", eg: "Moving forward, I'd like to discuss our Q4 strategy." },
+        { expr: "I propose shifting ... toward ...", usage: "リソース配分の提案", eg: "I propose shifting 15% of the budget toward digital channels." },
+        { expr: "Does anyone have concerns about this approach?", usage: "意見・懸念を募る", eg: "Does anyone have concerns about the new timeline?" },
+      ],
+    },
+    training: {
+      title: "Economic Recovery",
+      script: "Japan's economy is showing positive signs of recovery. The government announced a new stimulus package worth 30 trillion yen. The unemployment rate has stabilized at around 2.5%, and major companies are reporting increased profits. Economists expect GDP growth to reach 1.5% this fiscal year.",
+    },
+  },
+  {
+    // Day 2
+    date_label: "Day 2",
+    topic: "テクノロジー・DX",
+    vocabulary: [
+      { word: "digital transformation", phonetic: "/ˈdɪdʒɪtl ˌtrænsˈfɔːmeɪʃn/", meaning: "デジタルトランスフォーメーション（DX）", tags: ["IT","ビジネス"], example: "Many Japanese companies are accelerating digital transformation.", exampleJa: "多くの日本企業がDXを加速させています。" },
+      { word: "cybersecurity", phonetic: "/ˈsaɪbərsɪˌkjʊərɪti/", meaning: "サイバーセキュリティ", tags: ["IT"], example: "Cybersecurity threats have increased significantly this year.", exampleJa: "今年はサイバーセキュリティの脅威が大幅に増加しました。" },
+      { word: "AI-driven", phonetic: "/ˌeɪ ˈaɪ ˈdrɪvn/", meaning: "AI主導の", tags: ["IT","AI"], example: "AI-driven solutions are transforming healthcare.", exampleJa: "AI主導のソリューションが医療を変革しています。" },
+      { word: "data breach", phonetic: "/ˈdeɪtə briːtʃ/", meaning: "情報漏洩", tags: ["IT","セキュリティ"], example: "The company suffered a major data breach last month.", exampleJa: "先月、その会社は大規模な情報漏洩を受けました。" },
+      { word: "scalability", phonetic: "/ˌskeɪləˈbɪlɪti/", meaning: "スケーラビリティ・拡張性", tags: ["IT","ビジネス"], example: "Cloud platforms offer excellent scalability for growing businesses.", exampleJa: "クラウドプラットフォームは成長中のビジネスに優れたスケーラビリティを提供します。" },
+    ],
+    vocabQuiz: [
+      { q: "「情報漏洩」を英語で？", opts: ["data breach", "cybersecurity", "scalability", "digital transformation"], ans: 0 },
+      { q: "Which phrase means 'AI主導の'?", opts: ["data breach", "AI-driven", "scalability", "cybersecurity"], ans: 1 },
+      { q: "Complete: 'Cloud platforms offer excellent ___ for growing businesses.'", opts: ["data breach", "cybersecurity", "digital transformation", "scalability"], ans: 3 },
+    ],
+    listening: {
+      title: "Japan Leads in AI Regulation Policy",
+      level: "Intermediate",
+      parts: [
+        { text: "Japan has announced a comprehensive ", blank: null },
+        { text: "", blank: { id: 0, answer: "framework", hint: "(枠組み)" } },
+        { text: " for artificial intelligence regulation, aiming to balance ", blank: null },
+        { text: "", blank: { id: 1, answer: "innovation", hint: "(革新)" } },
+        { text: " with safety. The new guidelines will require companies to ", blank: null },
+        { text: "", blank: { id: 2, answer: "disclose", hint: "(開示する)" } },
+        { text: " how AI systems make ", blank: null },
+        { text: "", blank: { id: 3, answer: "decisions", hint: "(決定)" } },
+        { text: ". Tech giants including major domestic firms have generally ", blank: null },
+        { text: "", blank: { id: 4, answer: "welcomed", hint: "(歓迎した)" } },
+        { text: " the move, saying clear rules reduce ", blank: null },
+        { text: "", blank: { id: 5, answer: "uncertainty", hint: "(不確実性)" } },
+        { text: " for investment.", blank: null },
+      ],
+      quiz: [
+        { q: "What is Japan trying to balance?", opts: ["cost and profit", "innovation and safety", "speed and accuracy", "local and global"], ans: 1 },
+        { q: "What must companies disclose?", opts: ["financial data", "employee information", "how AI makes decisions", "customer data"], ans: 2 },
+        { q: "How did tech giants react?", opts: ["strongly opposed", "neutral", "generally welcomed", "requested changes"], ans: 2 },
+      ],
+      vocabList: [
+        { word: "framework", meaning: "枠組み・フレームワーク" },
+        { word: "artificial intelligence", meaning: "人工知能（AI）" },
+        { word: "disclose", meaning: "開示する" },
+        { word: "investment", meaning: "投資" },
+        { word: "uncertainty", meaning: "不確実性" },
+      ],
+    },
+    reading: {
+      title: "IT Project Kickoff Meeting",
+      text: `Thank you all for being here. Today we're kicking off our digital transformation initiative. As you know, our legacy systems are creating bottlenecks that are affecting our overall productivity.
+
+Our primary objective is to migrate to a cloud-based infrastructure by Q2 next year. This will involve three phases: assessment, migration, and optimization. I want to emphasize that minimizing downtime during the migration is our top priority.
+
+In terms of budget, we've secured 500 million yen for this project. However, we need to remain cost-conscious throughout. I'll ask each team lead to submit weekly progress reports.
+
+Are there any technical constraints we should be aware of before we proceed? Let's ensure all stakeholders are aligned before moving to the next phase.`,
+      vocabList: [
+        { word: "digital transformation", meaning: "DX・デジタル変革" },
+        { word: "legacy system", meaning: "旧式システム" },
+        { word: "bottleneck", meaning: "ボトルネック・障害" },
+        { word: "migrate", meaning: "移行する" },
+        { word: "downtime", meaning: "システム停止時間" },
+        { word: "cost-conscious", meaning: "コスト意識の高い" },
+      ],
+      grammar: {
+        point: "目的・優先順位の表現",
+        explain: "'Our primary objective is to...'（主な目的は〜）、'top priority'（最優先事項）、'I want to emphasize that...'（〜を強調したい）は会議で頻出のパターン。",
+        examples: ["Our primary objective is to migrate to cloud by Q2.", "Minimizing downtime is our top priority.", "I want to emphasize that cost control is critical."],
+      },
+      quiz: [
+        { q: "When is the cloud migration deadline?", opts: ["Q1 next year", "Q2 next year", "Q3 next year", "Q4 this year"], ans: 1 },
+        { q: "What is the budget for this project?", opts: ["300 million yen", "400 million yen", "500 million yen", "600 million yen"], ans: 2 },
+        { q: "How often should team leads submit reports?", opts: ["Daily", "Weekly", "Monthly", "Quarterly"], ans: 1 },
+      ],
+      expressions: [
+        { expr: "I want to emphasize that...", usage: "重要事項を強調する", eg: "I want to emphasize that the deadline is non-negotiable." },
+        { expr: "Are there any constraints we should be aware of?", usage: "制約や問題点を確認する", eg: "Are there any technical constraints before we proceed?" },
+        { expr: "Let's ensure all stakeholders are aligned.", usage: "関係者の認識合わせを求める", eg: "Let's ensure all stakeholders are aligned before launch." },
+      ],
+    },
+    training: {
+      title: "AI Regulation in Japan",
+      script: "Japan has announced a comprehensive framework for artificial intelligence regulation. The new guidelines require companies to disclose how AI systems make decisions. Tech giants have generally welcomed the move, saying clear rules reduce uncertainty for investment.",
+    },
+  },
+  {
+    // Day 3
+    date_label: "Day 3",
+    topic: "環境・ESG",
+    vocabulary: [
+      { word: "carbon neutral", phonetic: "/ˈkɑːrbən ˈnjuːtrəl/", meaning: "カーボンニュートラル", tags: ["環境","ESG"], example: "Japan aims to become carbon neutral by 2050.", exampleJa: "日本は2050年までにカーボンニュートラルを目指しています。" },
+      { word: "renewable energy", phonetic: "/rɪˈnjuːəbl ˈenərdʒi/", meaning: "再生可能エネルギー", tags: ["環境","エネルギー"], example: "Investment in renewable energy reached a record high.", exampleJa: "再生可能エネルギーへの投資が過去最高を記録しました。" },
+      { word: "ESG criteria", phonetic: "/ˌiː ˌes ˈdʒiː kraɪˈtɪəriə/", meaning: "ESG基準", tags: ["投資","ESG"], example: "Investors are increasingly using ESG criteria to evaluate companies.", exampleJa: "投資家はますますESG基準を使って企業を評価しています。" },
+      { word: "greenhouse gas emissions", phonetic: "/ˈɡriːnhaʊs ɡæs ɪˈmɪʃənz/", meaning: "温室効果ガス排出量", tags: ["環境"], example: "The firm pledged to cut greenhouse gas emissions by 50%.", exampleJa: "その会社は温室効果ガス排出量を50%削減すると誓約しました。" },
+      { word: "supply chain", phonetic: "/səˈplaɪ tʃeɪn/", meaning: "サプライチェーン", tags: ["ビジネス","物流"], example: "The disaster disrupted supply chains across Asia.", exampleJa: "その災害はアジア全域のサプライチェーンを混乱させました。" },
+    ],
+    vocabQuiz: [
+      { q: "「再生可能エネルギー」を英語で？", opts: ["supply chain", "ESG criteria", "renewable energy", "carbon neutral"], ans: 2 },
+      { q: "Which term means '温室効果ガス排出量'?", opts: ["ESG criteria", "greenhouse gas emissions", "supply chain", "renewable energy"], ans: 1 },
+      { q: "Complete: 'Japan aims to become ___ by 2050.'", opts: ["supply chain", "renewable energy", "ESG criteria", "carbon neutral"], ans: 3 },
+    ],
+    listening: {
+      title: "Toyota Announces Ambitious Green Energy Plan",
+      level: "Intermediate",
+      parts: [
+        { text: "Toyota Motor Corporation has announced plans to ", blank: null },
+        { text: "", blank: { id: 0, answer: "achieve", hint: "(達成する)" } },
+        { text: " carbon ", blank: null },
+        { text: "", blank: { id: 1, answer: "neutrality", hint: "(中立性)" } },
+        { text: " across all its manufacturing plants by 2035. The automaker will ", blank: null },
+        { text: "", blank: { id: 2, answer: "invest", hint: "(投資する)" } },
+        { text: " 2 trillion yen in renewable energy and ", blank: null },
+        { text: "", blank: { id: 3, answer: "battery", hint: "(電池)" } },
+        { text: " technology. CEO Koji Sato said the company is ", blank: null },
+        { text: "", blank: { id: 4, answer: "committed", hint: "(取り組んでいる)" } },
+        { text: " to a sustainable future. The plan also includes ", blank: null },
+        { text: "", blank: { id: 5, answer: "reducing", hint: "(削減する)" } },
+        { text: " supply chain emissions by 30% within five years.", blank: null },
+      ],
+      quiz: [
+        { q: "When does Toyota aim for carbon neutrality in plants?", opts: ["2030", "2035", "2040", "2050"], ans: 1 },
+        { q: "How much will Toyota invest?", opts: ["1 trillion yen", "1.5 trillion yen", "2 trillion yen", "3 trillion yen"], ans: 2 },
+        { q: "By how much will supply chain emissions be reduced?", opts: ["20%", "25%", "30%", "40%"], ans: 2 },
+      ],
+      vocabList: [
+        { word: "carbon neutrality", meaning: "カーボンニュートラル（名詞形）" },
+        { word: "automaker", meaning: "自動車メーカー" },
+        { word: "committed to", meaning: "〜に取り組んでいる" },
+        { word: "supply chain emissions", meaning: "サプライチェーン排出量" },
+        { word: "sustainable future", meaning: "持続可能な未来" },
+      ],
+    },
+    reading: {
+      title: "ESG Strategy Discussion",
+      text: `Good afternoon. Today's agenda focuses on our ESG roadmap for the next three years. As you're aware, our institutional investors are placing increasing pressure on us to demonstrate tangible progress on sustainability metrics.
+
+First, let's address our carbon footprint. Our current emissions stand at 45,000 tons annually. Our target is to reduce this by 40% by 2027. To achieve this, we plan to source 60% of our energy from renewables and improve energy efficiency across all facilities.
+
+Second, regarding governance, we will strengthen our board diversity policy by ensuring that 30% of board positions are held by women by 2026.
+
+I'd like to open the floor for discussion. What challenges do you foresee in meeting these targets?`,
+      vocabList: [
+        { word: "ESG roadmap", meaning: "ESG計画" },
+        { word: "institutional investors", meaning: "機関投資家" },
+        { word: "carbon footprint", meaning: "炭素排出量" },
+        { word: "sustainability metrics", meaning: "サステナビリティ指標" },
+        { word: "board diversity", meaning: "取締役会の多様性" },
+        { word: "governance", meaning: "コーポレートガバナンス" },
+      ],
+      grammar: {
+        point: "数値目標の表現パターン",
+        explain: "目標設定では'Our target is to reduce this by 40%'（目標は40%削減）、'ensure that 30% are...'（30%が〜であることを確保）のような構造が会議で頻出。",
+        examples: ["Our target is to reduce emissions by 40% by 2027.", "We plan to source 60% of energy from renewables.", "Ensure that 30% of board positions are held by women."],
+      },
+      quiz: [
+        { q: "What is the annual emission level?", opts: ["30,000 tons", "40,000 tons", "45,000 tons", "50,000 tons"], ans: 2 },
+        { q: "What percentage of energy should come from renewables?", opts: ["40%", "50%", "60%", "70%"], ans: 2 },
+        { q: "What is the board diversity target for women?", opts: ["20%", "25%", "30%", "35%"], ans: 2 },
+      ],
+      expressions: [
+        { expr: "I'd like to open the floor for discussion.", usage: "議論を促す・意見を募る", eg: "I'd like to open the floor — what challenges do you foresee?" },
+        { expr: "Our target is to reduce this by...", usage: "数値目標を示す", eg: "Our target is to reduce emissions by 40% by 2027." },
+        { expr: "As you're aware,...", usage: "既知の情報を前置きする", eg: "As you're aware, investors are increasing pressure on us." },
+      ],
+    },
+    training: {
+      title: "Toyota Green Energy",
+      script: "Toyota Motor Corporation has announced plans to achieve carbon neutrality across all its manufacturing plants by 2035. The automaker will invest 2 trillion yen in renewable energy and battery technology. The plan also includes reducing supply chain emissions by 30% within five years.",
+    },
+  },
+  {
+    // Day 4
+    date_label: "Day 4",
+    topic: "人事・労働",
+    vocabulary: [
+      { word: "workforce", phonetic: "/ˈwɜːrkfɔːrs/", meaning: "労働力・従業員全体", tags: ["人事"], example: "The company plans to expand its workforce by 20%.", exampleJa: "その会社は労働力を20%拡大する計画です。" },
+      { word: "remote work", phonetic: "/rɪˈmoʊt wɜːrk/", meaning: "リモートワーク・テレワーク", tags: ["人事","働き方"], example: "Remote work has become standard at many tech firms.", exampleJa: "多くのIT企業でリモートワークが標準になっています。" },
+      { word: "retention rate", phonetic: "/rɪˈtenʃn reɪt/", meaning: "従業員定着率", tags: ["人事"], example: "Our retention rate improved after introducing flexible hours.", exampleJa: "フレックスタイム導入後、定着率が改善しました。" },
+      { word: "upskilling", phonetic: "/ˈʌpsˌkɪlɪŋ/", meaning: "スキルアップ・スキル向上", tags: ["人事","研修"], example: "Upskilling employees is essential in the age of automation.", exampleJa: "自動化の時代において従業員のスキルアップは不可欠です。" },
+      { word: "diversity and inclusion", phonetic: "/daɪˈvɜːrsɪti ænd ɪnˈkluːʒn/", meaning: "多様性と包括性（D&I）", tags: ["人事","ESG"], example: "The firm has a strong diversity and inclusion policy.", exampleJa: "その会社は強力なD&I方針を持っています。" },
+    ],
+    vocabQuiz: [
+      { q: "「従業員定着率」を英語で？", opts: ["upskilling", "workforce", "retention rate", "remote work"], ans: 2 },
+      { q: "Which means 'スキルアップ'?", opts: ["retention rate", "upskilling", "workforce", "diversity and inclusion"], ans: 1 },
+      { q: "Complete: 'The company plans to expand its ___ by 20%.'", opts: ["retention rate", "remote work", "workforce", "upskilling"], ans: 2 },
+    ],
+    listening: {
+      title: "Japan's Labor Shortage Crisis Deepens",
+      level: "Intermediate",
+      parts: [
+        { text: "Japan is facing a serious labor ", blank: null },
+        { text: "", blank: { id: 0, answer: "shortage", hint: "(不足)" } },
+        { text: " as its population continues to decline. The government has proposed measures to ", blank: null },
+        { text: "", blank: { id: 1, answer: "attract", hint: "(引き付ける)" } },
+        { text: " skilled workers from overseas. Companies are also increasing ", blank: null },
+        { text: "", blank: { id: 2, answer: "automation", hint: "(自動化)" } },
+        { text: " to compensate for the lack of human resources. The construction and ", blank: null },
+        { text: "", blank: { id: 3, answer: "nursing", hint: "(介護)" } },
+        { text: " care sectors are particularly affected. Experts say that improving working ", blank: null },
+        { text: "", blank: { id: 4, answer: "conditions", hint: "(条件)" } },
+        { text: " and offering competitive ", blank: null },
+        { text: "", blank: { id: 5, answer: "salaries", hint: "(給与)" } },
+        { text: " are essential to resolve the crisis.", blank: null },
+      ],
+      quiz: [
+        { q: "What is causing Japan's labor shortage?", opts: ["Economic recession", "Population decline", "Low wages", "High taxes"], ans: 1 },
+        { q: "What are companies increasing to compensate?", opts: ["Working hours", "Foreign investment", "Automation", "Training programs"], ans: 2 },
+        { q: "Which sectors are most affected?", opts: ["IT and finance", "Construction and nursing care", "Tourism and retail", "Manufacturing and agriculture"], ans: 1 },
+      ],
+      vocabList: [
+        { word: "labor shortage", meaning: "労働力不足" },
+        { word: "skilled workers", meaning: "熟練労働者" },
+        { word: "automation", meaning: "自動化" },
+        { word: "nursing care", meaning: "介護" },
+        { word: "working conditions", meaning: "労働条件" },
+      ],
+    },
+    reading: {
+      title: "HR Policy Review Meeting",
+      text: `Welcome to our quarterly HR review. I'd like to start with our recruitment performance. This quarter, we filled 78% of open positions, which is below our 90% target. The main bottleneck appears to be the technical screening process, which takes an average of three weeks.
+
+To address this, I propose implementing an AI-assisted screening tool, which should reduce the process to one week. Additionally, we're seeing high attrition in the engineering department — turnover reached 18% this year.
+
+Exit interview data suggests that compensation and career growth opportunities are the primary concerns. I recommend we conduct a salary benchmarking exercise against our top five competitors.
+
+Let's discuss what initiatives we can implement in Q4 to improve our employee value proposition.`,
+      vocabList: [
+        { word: "recruitment", meaning: "採用" },
+        { word: "bottleneck", meaning: "ボトルネック" },
+        { word: "attrition", meaning: "自然減・離職" },
+        { word: "turnover", meaning: "離職率" },
+        { word: "benchmarking", meaning: "ベンチマーキング・比較調査" },
+        { word: "employee value proposition", meaning: "従業員価値提案（EVP）" },
+      ],
+      grammar: {
+        point: "問題提起と解決策の表現",
+        explain: "'The main bottleneck appears to be...'（主な問題は〜のようだ）、'To address this, I propose...'（これに対処するため〜を提案する）は問題解決型会議の定番表現。",
+        examples: ["The bottleneck appears to be the screening process.", "To address this, I propose implementing AI tools.", "Exit data suggests compensation is the primary concern."],
+      },
+      quiz: [
+        { q: "What percentage of positions were filled?", opts: ["68%", "72%", "78%", "85%"], ans: 2 },
+        { q: "What is the engineering department's turnover rate?", opts: ["12%", "15%", "18%", "22%"], ans: 2 },
+        { q: "What does exit interview data suggest?", opts: ["Poor management", "Long commute", "Compensation and career growth", "Office environment"], ans: 2 },
+      ],
+      expressions: [
+        { expr: "The main bottleneck appears to be...", usage: "問題の原因を示す", eg: "The bottleneck appears to be the screening process." },
+        { expr: "To address this, I propose...", usage: "問題への対応策を提案", eg: "To address this, I propose a new screening tool." },
+        { expr: "Let's discuss what initiatives we can implement.", usage: "具体的な施策の議論に移る", eg: "Let's discuss what initiatives we can implement in Q4." },
+      ],
+    },
+    training: {
+      title: "Japan Labor Shortage",
+      script: "Japan is facing a serious labor shortage as its population continues to decline. Companies are increasing automation to compensate for the lack of human resources. Experts say that improving working conditions and offering competitive salaries are essential to resolve the crisis.",
+    },
+  },
+  {
+    // Day 5
+    date_label: "Day 5",
+    topic: "貿易・国際関係",
+    vocabulary: [
+      { word: "trade deficit", phonetic: "/treɪd ˈdefɪsɪt/", meaning: "貿易赤字", tags: ["経済","貿易"], example: "Japan recorded a trade deficit for the third consecutive month.", exampleJa: "日本は3ヶ月連続で貿易赤字を記録しました。" },
+      { word: "tariff", phonetic: "/ˈtærɪf/", meaning: "関税", tags: ["貿易"], example: "The new tariffs could impact Japanese car exports.", exampleJa: "新しい関税は日本の自動車輸出に影響を与える可能性があります。" },
+      { word: "free trade agreement", phonetic: "/friː treɪd əˈɡriːmənt/", meaning: "自由貿易協定（FTA）", tags: ["貿易","政治"], example: "Japan signed a free trade agreement with the EU.", exampleJa: "日本はEUと自由貿易協定を締結しました。" },
+      { word: "geopolitical risk", phonetic: "/ˌdʒiːoʊpəˈlɪtɪkəl rɪsk/", meaning: "地政学的リスク", tags: ["国際","リスク"], example: "Geopolitical risks are affecting global supply chains.", exampleJa: "地政学的リスクがグローバルなサプライチェーンに影響しています。" },
+      { word: "foreign direct investment", phonetic: "/ˈfɒrɪn daɪˈrekt ɪnˈvestmənt/", meaning: "外国直接投資（FDI）", tags: ["経済","投資"], example: "FDI in Japan reached a five-year high.", exampleJa: "日本への外国直接投資が5年ぶりの高水準に達しました。" },
+    ],
+    vocabQuiz: [
+      { q: "「関税」を英語で？", opts: ["trade deficit", "tariff", "free trade agreement", "geopolitical risk"], ans: 1 },
+      { q: "FDI stands for?", opts: ["Free Direct Investment", "Foreign Direct Investment", "Federal Development Initiative", "Financial Development Index"], ans: 1 },
+      { q: "Complete: 'Japan recorded a trade ___ for the third consecutive month.'", opts: ["surplus", "tariff", "deficit", "agreement"], ans: 2 },
+    ],
+    listening: {
+      title: "Japan and US Agree on Trade Framework",
+      level: "Intermediate",
+      parts: [
+        { text: "Japan and the United States have reached a preliminary ", blank: null },
+        { text: "", blank: { id: 0, answer: "agreement", hint: "(合意)" } },
+        { text: " on a new trade ", blank: null },
+        { text: "", blank: { id: 1, answer: "framework", hint: "(枠組み)" } },
+        { text: " that would reduce tariffs on agricultural ", blank: null },
+        { text: "", blank: { id: 2, answer: "products", hint: "(製品)" } },
+        { text: " and manufactured goods. The deal is expected to ", blank: null },
+        { text: "", blank: { id: 3, answer: "boost", hint: "(促進する)" } },
+        { text: " bilateral trade by 20% over the next decade. Japanese officials expressed ", blank: null },
+        { text: "", blank: { id: 4, answer: "optimism", hint: "(楽観主義)" } },
+        { text: " about the deal's potential to ", blank: null },
+        { text: "", blank: { id: 5, answer: "strengthen", hint: "(強化する)" } },
+        { text: " economic ties between the two nations.", blank: null },
+      ],
+      quiz: [
+        { q: "What will the agreement reduce?", opts: ["Immigration restrictions", "Tariffs on goods", "Defense spending", "Environmental regulations"], ans: 1 },
+        { q: "By how much is bilateral trade expected to increase?", opts: ["10%", "15%", "20%", "25%"], ans: 2 },
+        { q: "How did Japanese officials react?", opts: ["With skepticism", "With optimism", "With concern", "With opposition"], ans: 1 },
+      ],
+      vocabList: [
+        { word: "preliminary agreement", meaning: "予備的合意" },
+        { word: "tariffs", meaning: "関税" },
+        { word: "bilateral trade", meaning: "二国間貿易" },
+        { word: "economic ties", meaning: "経済的な結びつき" },
+        { word: "manufactured goods", meaning: "工業製品" },
+      ],
+    },
+    reading: {
+      title: "Global Expansion Strategy Meeting",
+      text: `Good evening, team. Tonight we'll discuss our global expansion strategy with a focus on the Southeast Asian market. Our market research indicates that Vietnam and Indonesia represent the highest growth potential for our product line.
+
+However, entering these markets requires navigating complex regulatory environments. I recommend we partner with local distributors rather than establishing wholly owned subsidiaries, at least initially. This reduces our upfront investment and political risk.
+
+From a competitive standpoint, we're currently priced 15% higher than local competitors. We have two options: either lower prices by improving supply chain efficiency, or differentiate through premium positioning and after-sales service.
+
+What is the team's view on the risk-reward balance of these two approaches?`,
+      vocabList: [
+        { word: "market research", meaning: "市場調査" },
+        { word: "regulatory environment", meaning: "規制環境" },
+        { word: "wholly owned subsidiary", meaning: "完全子会社" },
+        { word: "upfront investment", meaning: "初期投資" },
+        { word: "premium positioning", meaning: "プレミアム戦略" },
+        { word: "risk-reward balance", meaning: "リスクとリターンのバランス" },
+      ],
+      grammar: {
+        point: "選択肢の提示パターン",
+        explain: "'We have two options: either A, or B'（A か B の2択）、'rather than...'（〜よりも）は戦略会議での選択肢提示に必須の表現。",
+        examples: ["We have two options: either lower prices, or differentiate.", "I recommend partnering with distributors rather than subsidiaries.", "This reduces upfront investment and political risk."],
+      },
+      quiz: [
+        { q: "Which markets show the highest growth potential?", opts: ["Thailand and Malaysia", "Vietnam and Indonesia", "Philippines and Singapore", "Cambodia and Myanmar"], ans: 1 },
+        { q: "What does the speaker recommend initially?", opts: ["Wholly owned subsidiaries", "Joint ventures", "Local distributors", "Online-only entry"], ans: 2 },
+        { q: "By how much are they priced higher than competitors?", opts: ["10%", "12%", "15%", "20%"], ans: 2 },
+      ],
+      expressions: [
+        { expr: "We have two options: either A or B.", usage: "選択肢を明確に提示する", eg: "We have two options: either reduce costs or raise quality." },
+        { expr: "I recommend we ... rather than ...", usage: "比較しながら推奨する", eg: "I recommend we partner locally rather than build subsidiaries." },
+        { expr: "What is the team's view on...?", usage: "チームの意見を求める", eg: "What is the team's view on the risk-reward balance?" },
+      ],
+    },
+    training: {
+      title: "Japan-US Trade Agreement",
+      script: "Japan and the United States have reached a preliminary agreement on a new trade framework that would reduce tariffs on agricultural products and manufactured goods. The deal is expected to boost bilateral trade by 20% over the next decade. Japanese officials expressed optimism about the deal's potential.",
+    },
+  },
+  {
+    // Day 6
+    date_label: "Day 6",
+    topic: "金融・投資",
+    vocabulary: [
+      { word: "interest rate", phonetic: "/ˈɪntrəst reɪt/", meaning: "金利", tags: ["金融"], example: "The Bank of Japan raised interest rates for the first time in years.", exampleJa: "日本銀行は数年ぶりに金利を引き上げました。" },
+      { word: "portfolio", phonetic: "/pɔːrtˈfoʊlioʊ/", meaning: "ポートフォリオ（資産構成）", tags: ["投資"], example: "A diversified portfolio reduces investment risk.", exampleJa: "分散されたポートフォリオは投資リスクを減らします。" },
+      { word: "dividend", phonetic: "/ˈdɪvɪdend/", meaning: "配当金", tags: ["投資"], example: "The company announced a special dividend of 50 yen per share.", exampleJa: "同社は1株当たり50円の特別配当を発表しました。" },
+      { word: "volatility", phonetic: "/ˌvɒləˈtɪlɪti/", meaning: "ボラティリティ・価格変動性", tags: ["金融","リスク"], example: "Market volatility increased due to global uncertainty.", exampleJa: "世界的な不確実性により市場のボラティリティが高まりました。" },
+      { word: "asset allocation", phonetic: "/ˈæset ˌæləˈkeɪʃn/", meaning: "資産配分", tags: ["投資"], example: "Proper asset allocation is key to long-term financial health.", exampleJa: "適切な資産配分は長期的な財務健全性の鍵です。" },
+    ],
+    vocabQuiz: [
+      { q: "「配当金」を英語で？", opts: ["interest rate", "dividend", "volatility", "portfolio"], ans: 1 },
+      { q: "Which means 'ボラティリティ'?", opts: ["asset allocation", "portfolio", "volatility", "dividend"], ans: 2 },
+      { q: "Complete: 'A diversified ___ reduces investment risk.'", opts: ["dividend", "volatility", "interest rate", "portfolio"], ans: 3 },
+    ],
+    listening: {
+      title: "Tokyo Stock Exchange Hits Record High",
+      level: "Intermediate",
+      parts: [
+        { text: "The Tokyo Stock Exchange reached a record ", blank: null },
+        { text: "", blank: { id: 0, answer: "high", hint: "(高値)" } },
+        { text: " today, with the Nikkei 225 index surpassing 42,000 points for the first time. The surge was ", blank: null },
+        { text: "", blank: { id: 1, answer: "driven", hint: "(牽引された)" } },
+        { text: " by strong earnings reports from major technology and ", blank: null },
+        { text: "", blank: { id: 2, answer: "automotive", hint: "(自動車の)" } },
+        { text: " companies. Foreign ", blank: null },
+        { text: "", blank: { id: 3, answer: "investors", hint: "(投資家)" } },
+        { text: " have been buying Japanese stocks amid a weaker yen, which boosts ", blank: null },
+        { text: "", blank: { id: 4, answer: "export", hint: "(輸出)" } },
+        { text: " earnings. However, analysts warn that high ", blank: null },
+        { text: "", blank: { id: 5, answer: "valuations", hint: "(バリュエーション)" } },
+        { text: " may lead to increased market volatility in the coming months.", blank: null },
+      ],
+      quiz: [
+        { q: "What level did the Nikkei 225 surpass?", opts: ["38,000", "40,000", "42,000", "45,000"], ans: 2 },
+        { q: "What factor boosted export earnings?", opts: ["Strong yen", "Weak yen", "Low interest rates", "High inflation"], ans: 1 },
+        { q: "What do analysts warn about?", opts: ["Low profits", "Market crash", "High valuations leading to volatility", "Foreign disinvestment"], ans: 2 },
+      ],
+      vocabList: [
+        { word: "stock exchange", meaning: "証券取引所" },
+        { word: "earnings reports", meaning: "決算報告" },
+        { word: "foreign investors", meaning: "外国人投資家" },
+        { word: "valuation", meaning: "バリュエーション・株価評価" },
+        { word: "market volatility", meaning: "市場の変動性" },
+      ],
+    },
+    reading: {
+      title: "Investment Committee Meeting",
+      text: `Good afternoon. Today's investment committee meeting will focus on our Q4 portfolio rebalancing. Given the current macroeconomic environment — with rising interest rates and geopolitical tensions — we need to reassess our risk exposure.
+
+Currently, our portfolio is overweight in domestic equities at 45%. I propose reducing this to 35% and redirecting funds to fixed income securities and infrastructure assets, which offer more stable returns in volatile markets.
+
+Regarding our emerging market allocation, I recommend maintaining our current position for now, but implementing tighter stop-loss limits to protect against downside risk.
+
+For currency exposure, the yen has weakened significantly. Our hedging strategy needs to be reviewed to protect the value of our overseas investments.`,
+      vocabList: [
+        { word: "portfolio rebalancing", meaning: "ポートフォリオの再調整" },
+        { word: "risk exposure", meaning: "リスクエクスポージャー" },
+        { word: "equities", meaning: "株式" },
+        { word: "fixed income", meaning: "債券・固定利付き" },
+        { word: "stop-loss limit", meaning: "損切りライン" },
+        { word: "hedging strategy", meaning: "ヘッジ戦略" },
+      ],
+      grammar: {
+        point: "提案の強さを使い分ける",
+        explain: "'I propose reducing this to 35%'（〜に削減することを提案する）は数値変更に使う。'I recommend maintaining'（維持を推奨）は現状維持の推奨。'needs to be reviewed'（見直す必要がある）は必要性を示す。",
+        examples: ["I propose reducing domestic equities from 45% to 35%.", "I recommend maintaining our current position.", "Our hedging strategy needs to be reviewed."],
+      },
+      quiz: [
+        { q: "What is the current domestic equity allocation?", opts: ["35%", "40%", "45%", "50%"], ans: 2 },
+        { q: "What does the speaker propose reducing equities to?", opts: ["25%", "30%", "35%", "40%"], ans: 2 },
+        { q: "What needs to be reviewed due to yen weakness?", opts: ["Equity position", "Stop-loss limits", "Hedging strategy", "Interest rate exposure"], ans: 2 },
+      ],
+      expressions: [
+        { expr: "I propose reducing this to...", usage: "具体的な数値変更を提案", eg: "I propose reducing domestic equities to 35%." },
+        { expr: "...needs to be reviewed to protect against...", usage: "リスク対応の必要性を示す", eg: "Our strategy needs to be reviewed to protect against downside risk." },
+        { expr: "Given the current ... environment,...", usage: "現状を前置きして提案する", eg: "Given the current macroeconomic environment, we should reassess." },
+      ],
+    },
+    training: {
+      title: "Tokyo Stock Record",
+      script: "The Tokyo Stock Exchange reached a record high today, with the Nikkei 225 surpassing 42,000 points for the first time. The surge was driven by strong earnings reports from major technology and automotive companies. However, analysts warn that high valuations may lead to increased market volatility.",
+    },
+  },
+  {
+    // Day 7
+    date_label: "Day 7",
+    topic: "医療・社会保障",
+    vocabulary: [
+      { word: "healthcare system", phonetic: "/ˈhelθˌker ˈsɪstəm/", meaning: "医療制度", tags: ["医療","社会"], example: "Japan's healthcare system is ranked among the best in the world.", exampleJa: "日本の医療制度は世界トップクラスとされています。" },
+      { word: "social security", phonetic: "/ˈsoʊʃl sɪˈkjʊərɪti/", meaning: "社会保障", tags: ["社会","政治"], example: "Social security costs are rising due to Japan's aging population.", exampleJa: "高齢化により社会保障コストが上昇しています。" },
+      { word: "telemedicine", phonetic: "/ˈtelɪˌmedɪsɪn/", meaning: "遠隔医療", tags: ["医療","IT"], example: "Telemedicine services expanded rapidly during the pandemic.", exampleJa: "パンデミック中に遠隔医療サービスが急速に拡大しました。" },
+      { word: "demographic shift", phonetic: "/ˌdeməˈɡræfɪk ʃɪft/", meaning: "人口動態の変化", tags: ["社会","経済"], example: "Japan's demographic shift is creating unique economic challenges.", exampleJa: "日本の人口動態の変化が独特な経済的課題を生み出しています。" },
+      { word: "preventive care", phonetic: "/prɪˈventɪv ker/", meaning: "予防医療", tags: ["医療","健康"], example: "Investing in preventive care reduces long-term medical costs.", exampleJa: "予防医療への投資は長期的な医療費を削減します。" },
+    ],
+    vocabQuiz: [
+      { q: "「遠隔医療」を英語で？", opts: ["social security", "preventive care", "telemedicine", "demographic shift"], ans: 2 },
+      { q: "Which means '人口動態の変化'?", opts: ["telemedicine", "demographic shift", "healthcare system", "preventive care"], ans: 1 },
+      { q: "Complete: 'Investing in ___ reduces long-term medical costs.'", opts: ["social security", "telemedicine", "demographic shift", "preventive care"], ans: 3 },
+    ],
+    listening: {
+      title: "Japan Expands Telemedicine Services Nationwide",
+      level: "Intermediate",
+      parts: [
+        { text: "Japan's government has announced plans to expand ", blank: null },
+        { text: "", blank: { id: 0, answer: "telemedicine", hint: "(遠隔医療)" } },
+        { text: " services to all ", blank: null },
+        { text: "", blank: { id: 1, answer: "rural", hint: "(地方の)" } },
+        { text: " areas by next year. The initiative aims to address the growing shortage of ", blank: null },
+        { text: "", blank: { id: 2, answer: "doctors", hint: "(医師)" } },
+        { text: " in regional areas, where the ", blank: null },
+        { text: "", blank: { id: 3, answer: "elderly", hint: "(高齢者)" } },
+        { text: " population is disproportionately high. Under the new system, patients can ", blank: null },
+        { text: "", blank: { id: 4, answer: "consult", hint: "(相談する)" } },
+        { text: " a physician online using their smartphone. The government has ", blank: null },
+        { text: "", blank: { id: 5, answer: "allocated", hint: "(配分した)" } },
+        { text: " 50 billion yen to subsidize the expansion.", blank: null },
+      ],
+      quiz: [
+        { q: "When will telemedicine reach all rural areas?", opts: ["This year", "Next year", "In 3 years", "In 5 years"], ans: 1 },
+        { q: "What problem does this initiative address?", opts: ["High hospital costs", "Doctor shortage in regional areas", "Low insurance coverage", "Elderly poverty"], ans: 1 },
+        { q: "How much has the government allocated?", opts: ["10 billion yen", "30 billion yen", "50 billion yen", "100 billion yen"], ans: 2 },
+      ],
+      vocabList: [
+        { word: "telemedicine", meaning: "遠隔医療" },
+        { word: "rural areas", meaning: "地方・農村地域" },
+        { word: "regional", meaning: "地域の" },
+        { word: "disproportionately", meaning: "不均衡に" },
+        { word: "subsidize", meaning: "補助金を出す" },
+      ],
+    },
+    reading: {
+      title: "Healthcare Innovation Strategy",
+      text: `Thank you for attending today's healthcare strategy session. Our core challenge is clear: Japan's population is aging faster than any other developed nation, yet our healthcare expenditure as a percentage of GDP remains below the OECD average.
+
+We have identified three strategic priorities. First, accelerating digital health adoption — including electronic health records and AI-assisted diagnostics. Second, strengthening preventive care programs to reduce hospitalization rates. Studies show that every 1 yen invested in prevention saves 3 yen in treatment costs.
+
+Third, reforming the reimbursement system to incentivize outcomes rather than procedures. This requires close collaboration with the Ministry of Health.
+
+I would like each division to present their implementation roadmap by end of next month.`,
+      vocabList: [
+        { word: "healthcare expenditure", meaning: "医療費" },
+        { word: "electronic health records", meaning: "電子カルテ" },
+        { word: "AI-assisted diagnostics", meaning: "AI支援診断" },
+        { word: "hospitalization rate", meaning: "入院率" },
+        { word: "reimbursement system", meaning: "診療報酬制度" },
+        { word: "incentivize", meaning: "インセンティブを与える" },
+      ],
+      grammar: {
+        point: "優先順位を列挙する表現",
+        explain: "'We have identified three strategic priorities. First,...Second,...Third,...'（3つの戦略的優先事項を特定しました。第1に…）は長い会議での報告に欠かせない構造。",
+        examples: ["We have identified three strategic priorities.", "First, accelerating digital health adoption.", "Studies show that every 1 yen invested saves 3 yen."],
+      },
+      quiz: [
+        { q: "What is Japan's core healthcare challenge?", opts: ["Low doctor numbers", "Aging population with below-average spending", "Lack of technology", "High drug costs"], ans: 1 },
+        { q: "What does prevention cost-benefit show?", opts: ["1 yen saves 2 yen", "1 yen saves 3 yen", "1 yen saves 5 yen", "Break even"], ans: 1 },
+        { q: "What must each division submit by end of next month?", opts: ["Budget proposal", "Staff plan", "Implementation roadmap", "Research report"], ans: 2 },
+      ],
+      expressions: [
+        { expr: "We have identified three strategic priorities.", usage: "戦略的優先事項を提示する", eg: "We have identified three priorities: cost, quality, and speed." },
+        { expr: "Studies show that...", usage: "データや研究で裏付ける", eg: "Studies show that prevention saves 3x in treatment costs." },
+        { expr: "This requires close collaboration with...", usage: "連携の必要性を示す", eg: "This requires close collaboration with the Ministry of Health." },
+      ],
+    },
+    training: {
+      title: "Telemedicine Expansion",
+      script: "Japan's government has announced plans to expand telemedicine services to all rural areas by next year. The initiative aims to address the growing shortage of doctors in regional areas, where the elderly population is disproportionately high. The government has allocated 50 billion yen to subsidize the expansion.",
+    },
+  },
+];
+
+// ===== TIMER HOOK =====
+function useTimer(initialSeconds) {
+  const [seconds, setSeconds] = useState(initialSeconds);
+  const [running, setRunning] = useState(false);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (running && seconds > 0) {
+      intervalRef.current = setInterval(() => setSeconds(s => s - 1), 1000);
+    } else {
+      clearInterval(intervalRef.current);
+      if (seconds === 0) setRunning(false);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [running, seconds]);
+
+  const start = () => setRunning(true);
+  const pause = () => setRunning(false);
+  const reset = () => { setRunning(false); setSeconds(initialSeconds); };
+  return { seconds, running, start, pause, reset };
+}
+
+// ===== TIMER COMPONENT =====
+function Timer({ totalSeconds = 300 }) {
+  const { seconds, running, start, pause, reset } = useTimer(totalSeconds);
+  const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const secs = (seconds % 60).toString().padStart(2, '0');
+  const pct = (seconds / totalSeconds) * 100;
+  const cls = seconds <= 30 ? 'danger' : seconds <= 60 ? 'warning' : '';
+  return (
+    <div className="timer-bar">
+      <div>
+        <div className={`timer-display ${cls}`}>{mins}:{secs}</div>
+        <div className="timer-label">残り時間</div>
+      </div>
+      <div className="timer-progress">
+        <div className="timer-progress-fill" style={{ width: `${pct}%` }} />
+      </div>
+      <button className="timer-btn reset" onClick={reset}>↺</button>
+      {running
+        ? <button className="timer-btn pause" onClick={pause}>⏸ 一時停止</button>
+        : <button className="timer-btn start" onClick={start}>▶ スタート</button>
+      }
+    </div>
+  );
+}
+
+// ===== QUIZ COMPONENT =====
+function Quiz({ questions, onComplete }) {
+  const [idx, setIdx] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+
+  const q = questions[idx];
+  const handleSelect = (i) => {
+    if (selected !== null) return;
+    setSelected(i);
+    if (i === q.ans) setScore(s => s + 1);
+  };
+  const next = () => {
+    if (idx + 1 < questions.length) {
+      setIdx(i => i + 1);
+      setSelected(null);
+    } else {
+      setDone(true);
+      onComplete && onComplete(score + (selected === q.ans ? 1 : 0));
+    }
+  };
+  const restart = () => { setIdx(0); setSelected(null); setScore(0); setDone(false); };
+
+  if (done) {
+    const final = score + (selected === q.ans ? 0 : 0);
+    const pct = Math.round((score / questions.length) * 100);
+    const cls = pct >= 80 ? 'good' : pct >= 50 ? 'ok' : 'bad';
+    return (
+      <div className="fade-in" style={{ textAlign: 'center', padding: '16px 0' }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>{pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '💪'}</div>
+        <div className={`score-badge ${cls}`} style={{ fontSize: '1rem', padding: '6px 16px' }}>
+          {score} / {questions.length} 正解 ({pct}%)
+        </div>
+        <div style={{ fontSize: '.85rem', color: 'var(--text-muted)', margin: '12px 0' }}>
+          {pct >= 80 ? '素晴らしい！' : pct >= 50 ? 'もう少しです！' : 'もう一度チャレンジしよう！'}
+        </div>
+        <button className="btn btn-secondary" onClick={restart}>もう一度</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fade-in">
+      <div className="quiz-question">Q{idx + 1}. {q.q}</div>
+      <div className="quiz-options">
+        {q.opts.map((opt, i) => {
+          let cls = 'quiz-opt';
+          if (selected !== null) {
+            cls += ' disabled';
+            if (i === q.ans) cls += ' correct';
+            else if (i === selected) cls += ' wrong';
+          }
+          return <button key={i} className={cls} onClick={() => handleSelect(i)}>{opt}</button>;
+        })}
+      </div>
+      {selected !== null && (
+        <div className={`quiz-result ${selected === q.ans ? 'correct' : 'wrong'}`}>
+          {selected === q.ans ? '✓ 正解！' : `✗ 正解は「${q.opts[q.ans]}」`}
+        </div>
+      )}
+      <div className="quiz-nav">
+        <div className="quiz-progress">{idx + 1} / {questions.length}</div>
+        {selected !== null && (
+          <button className="btn btn-primary" onClick={next}>
+            {idx + 1 < questions.length ? '次の問題 →' : '結果を見る'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== VOCAB SECTION =====
+function VocabSection({ data }) {
+  const [expanded, setExpanded] = useState(null);
+  const [showQuiz, setShowQuiz] = useState(false);
+
+  return (
+    <div className="fade-in">
+      <Timer totalSeconds={300} />
+      <div className="card">
+        <div className="card-title">
+          <span>📚</span> 今日の語彙 5語
+          <span className="card-subtitle">タップして例文を確認</span>
+        </div>
+        <div className="vocab-grid">
+          {data.vocabulary.map((v, i) => (
+            <div key={i} className={`vocab-item ${expanded === i ? 'expanded' : ''}`}
+              onClick={() => setExpanded(expanded === i ? null : i)}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                <div>
+                  <span className="vocab-word">{v.word}</span>
+                  <span className="vocab-phonetic"> {v.phonetic}</span>
+                </div>
+                <span style={{ color: 'var(--text-light)', fontSize: '.8rem' }}>{expanded === i ? '▲' : '▼'}</span>
+              </div>
+              {v.tags && <div style={{ marginTop: '4px' }}>{v.tags.map(t => <span key={t} className="vocab-tag">{t}</span>)}</div>}
+              {expanded === i && (
+                <div className="animate-pop">
+                  <div className="vocab-meaning">🇯🇵 {v.meaning}</div>
+                  <div className="vocab-example">"{v.example}"</div>
+                  <div className="vocab-example-ja">→ {v.exampleJa}</div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-title"><span>✏️</span> 語彙クイズ</div>
+        {!showQuiz
+          ? <button className="btn btn-primary" onClick={() => setShowQuiz(true)}>クイズを始める</button>
+          : <Quiz questions={data.vocabQuiz.map(q => ({ q: q.q, opts: q.opts, ans: q.ans }))} />
+        }
+      </div>
+    </div>
+  );
+}
+
+// ===== LISTENING SECTION =====
+function ListeningSection({ data }) {
+  const [blanks, setBlanks] = useState({});
+  const [checked, setChecked] = useState(false);
+  const [showAnswers, setShowAnswers] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [showVocab, setShowVocab] = useState(false);
+
+  const l = data.listening;
+  const allBlanks = l.parts.filter(p => p.blank).map(p => p.blank);
+
+  const handleInput = (id, val) => {
+    setBlanks(b => ({ ...b, [id]: val }));
+  };
+
+  const check = () => setChecked(true);
+  const reset = () => { setBlanks({}); setChecked(false); };
+
+  const correct = allBlanks.filter(b => (blanks[b.id] || '').toLowerCase().trim() === b.answer.toLowerCase()).length;
+
+  return (
+    <div className="fade-in">
+      <Timer totalSeconds={300} />
+      <div className="card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '16px' }}>
+          <div className="card-title" style={{ margin: 0 }}><span>🎧</span> {l.title}</div>
+          <span className={`level-badge level-${l.level.toLowerCase()}`}>{l.level}</span>
+        </div>
+        <p style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
+          空欄に入る英単語を入力してください。ヒントを参考にしましょう。
+        </p>
+        <div className="script-display">
+          {l.parts.map((part, i) => {
+            if (!part.blank) return <span key={i}>{part.text}</span>;
+            const b = part.blank;
+            const val = blanks[b.id] || '';
+            const isCorrect = checked && val.toLowerCase().trim() === b.answer.toLowerCase();
+            const isWrong = checked && val.toLowerCase().trim() !== b.answer.toLowerCase();
+            return (
+              <span key={i} style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', margin: '0 2px', verticalAlign: 'bottom' }}>
+                <input
+                  className={`blank-input ${isCorrect ? 'correct' : isWrong ? 'wrong' : ''}`}
+                  style={{ width: `${Math.max(b.answer.length * 10 + 20, 80)}px` }}
+                  value={checked && isWrong ? b.answer : val}
+                  onChange={e => handleInput(b.id, e.target.value)}
+                  disabled={checked}
+                  placeholder="?"
+                />
+                <span className="hint-text">{b.hint}</span>
+              </span>
+            );
+          })}
+        </div>
+
+        {!checked ? (
+          <div style={{ display: 'flex', gap: '8px', marginTop: '14px', flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" onClick={check}>答え合わせ</button>
+            <button className="btn btn-secondary" onClick={() => setShowAnswers(!showAnswers)}>
+              {showAnswers ? '答えを隠す' : 'ヒント・答えを見る'}
+            </button>
+          </div>
+        ) : (
+          <div style={{ marginTop: '14px' }}>
+            <div className={`score-badge ${correct === allBlanks.length ? 'good' : correct >= allBlanks.length / 2 ? 'ok' : 'bad'}`}>
+              {correct} / {allBlanks.length} 正解
+            </div>
+            <button className="btn btn-secondary" onClick={reset} style={{ marginLeft: '10px' }}>リセット</button>
+          </div>
+        )}
+
+        {showAnswers && (
+          <div style={{ marginTop: '12px', padding: '12px', background: 'var(--surface2)', borderRadius: '8px' }}>
+            <div style={{ fontSize: '.8rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '6px' }}>答え一覧</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {allBlanks.map(b => (
+                <span key={b.id} style={{ padding: '3px 8px', background: '#eef2ff', borderRadius: '4px', fontSize: '.8rem', color: 'var(--primary)', fontWeight: '600' }}>
+                  [{b.id + 1}] {b.answer}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <div className="card-title"><span>❓</span> 理解クイズ</div>
+        {!showQuiz
+          ? <button className="btn btn-primary" onClick={() => setShowQuiz(true)}>クイズを始める</button>
+          : <Quiz questions={l.quiz.map(q => ({ q: q.q, opts: q.opts, ans: q.ans }))} />
+        }
+      </div>
+
+      <div className="card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="card-title" style={{ margin: 0 }}><span>📝</span> 重要語彙リスト</div>
+          <button className="btn btn-secondary" onClick={() => setShowVocab(!showVocab)} style={{ fontSize: '.75rem', padding: '6px 12px' }}>
+            {showVocab ? '隠す' : '表示'}
+          </button>
+        </div>
+        {showVocab && (
+          <div style={{ marginTop: '12px' }}>
+            {l.vocabList.map((v, i) => (
+              <div key={i} className="vocab-list-item">
+                <span className="vocab-list-word">{v.word}</span>
+                <span className="vocab-list-meaning">{v.meaning}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== READING SECTION =====
+function ReadingSection({ data }) {
+  const [showVocab, setShowVocab] = useState(false);
+  const [showGrammar, setShowGrammar] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const r = data.reading;
+
+  return (
+    <div className="fade-in">
+      <Timer totalSeconds={300} />
+      <div className="card">
+        <div className="card-title"><span>📰</span> {r.title}</div>
+        <div className="reading-text">{r.text}</div>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary" onClick={() => setShowVocab(!showVocab)}>
+            {showVocab ? '語彙を隠す' : '📗 語彙リスト'}
+          </button>
+          <button className="btn btn-secondary" onClick={() => setShowGrammar(!showGrammar)}>
+            {showGrammar ? '文法を隠す' : '📐 文法ポイント'}
+          </button>
+        </div>
+        {showVocab && (
+          <div style={{ marginTop: '14px', padding: '14px', background: 'var(--surface2)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+            <div style={{ fontWeight: '700', marginBottom: '8px', fontSize: '.85rem' }}>語彙リスト</div>
+            {r.vocabList.map((v, i) => (
+              <div key={i} className="vocab-list-item">
+                <span className="vocab-list-word">{v.word}</span>
+                <span className="vocab-list-meaning">{v.meaning}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {showGrammar && (
+          <div style={{ marginTop: '14px', padding: '14px', background: '#fefce8', borderRadius: '10px', border: '1px solid #fde047' }}>
+            <div style={{ fontWeight: '700', color: '#78350f', marginBottom: '6px', fontSize: '.85rem' }}>📐 {r.grammar.point}</div>
+            <div style={{ fontSize: '.82rem', color: '#92400e', lineHeight: '1.6', marginBottom: '10px' }}>{r.grammar.explain}</div>
+            {r.grammar.examples.map((ex, i) => (
+              <div key={i} style={{ fontSize: '.82rem', color: '#78350f', padding: '4px 0', borderLeft: '2px solid #fbbf24', paddingLeft: '8px', margin: '4px 0', fontStyle: 'italic' }}>{ex}</div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <div className="card-title"><span>❓</span> 理解クイズ</div>
+        {!showQuiz
+          ? <button className="btn btn-primary" onClick={() => setShowQuiz(true)}>クイズを始める</button>
+          : <Quiz questions={r.quiz.map(q => ({ q: q.q, opts: q.opts, ans: q.ans }))} />
+        }
+      </div>
+
+      <div className="card">
+        <div className="card-title"><span>💬</span> 会議で使える表現 3選</div>
+        <div style={{ display: 'grid', gap: '10px' }}>
+          {r.expressions.map((ex, i) => (
+            <div key={i} className="expression-card">
+              <div className="expression-text">"{ex.expr}"</div>
+              <div className="expression-usage">● {ex.usage}</div>
+              <div className="expression-example">例: {ex.eg}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ===== TRAINING SECTION =====
+function TrainingSection({ data }) {
+  const [step, setStep] = useState(0);
+  const [doneSteps, setDoneSteps] = useState([]);
+  const [showScript, setShowScript] = useState(false);
+  const [dictation, setDictation] = useState('');
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [recordings, setRecordings] = useState([]);
+  const mediaRef = useRef(null);
+  const chunksRef = useRef([]);
+
+  const t = data.training;
+  const STEPS = [
+    { name: 'リピーティング', icon: '🔊', instruction: '各文を聞いて、同じように繰り返して発音してください。短いフレーズごとに区切り、リズムとイントネーションを意識しましょう。', tip: '「録音→再生→修正」を繰り返すと効果的です。' },
+    { name: '音読', icon: '📖', instruction: 'スクリプトを見ながら、意味を理解しつつ音読してください。ニュースキャスターのように感情を込めて読みましょう。', tip: '自分の声を録音して客観的にチェックしてみてください。' },
+    { name: 'ディクテーション', icon: '✍️', instruction: 'スクリプトを見ずに、聞こえた英語を下のテキストボックスに書き起こしてください。', tip: '前置詞・冠詞など機能語の聞き取りに注意しましょう。' },
+    { name: 'オーバーラッピング', icon: '🎙️', instruction: 'スクリプトを見ながら、音声に重ねて同時に読み上げてください。音声のスピードに合わせることが重要です。', tip: '最初はゆっくりしたスピードで練習し、徐々に速くしましょう。' },
+    { name: 'シャドーイング', icon: '👤', instruction: 'スクリプトを見ずに、音声を聞きながら0.5〜1秒遅れて後に続いて発話してください。', tip: 'リズム・イントネーション（プロソディ）と意味理解を同時に意識しましょう。' },
+  ];
+
+  const markDone = (i) => {
+    if (!doneSteps.includes(i)) setDoneSteps(d => [...d, i]);
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRef.current = new MediaRecorder(stream);
+      chunksRef.current = [];
+      mediaRef.current.ondataavailable = e => chunksRef.current.push(e.data);
+      mediaRef.current.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        setRecordings(r => [...r, url]);
+        stream.getTracks().forEach(t => t.stop());
+      };
+      mediaRef.current.start();
+      setRecording(true);
+    } catch (e) {
+      alert('マイクへのアクセスが必要です。ブラウザの設定を確認してください。');
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRef.current?.stop();
+    setRecording(false);
+    markDone(step);
+  };
+
+  const currentStep = STEPS[step];
+  const showDictation = step === 2;
+  const hideScript = step === 2 || step === 4;
+
+  return (
+    <div className="fade-in">
+      <Timer totalSeconds={300} />
+      <div className="card">
+        <div className="card-title"><span>🏋️</span> リスニングトレーニング</div>
+        <div className="step-tabs">
+          {STEPS.map((s, i) => (
+            <button key={i} className={`step-tab ${step === i ? 'active' : ''} ${doneSteps.includes(i) ? 'done' : ''}`}
+              onClick={() => setStep(i)}>
+              <span className="step-badge">{doneSteps.includes(i) ? '✓' : i + 1}</span>
+              {s.icon} {s.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="training-step">
+          <div className="step-title">Step {step + 1}: {currentStep.name}</div>
+          <div className="step-instruction">{currentStep.instruction}</div>
+          <div className="step-tip"><span className="tip-label">💡 ヒント: </span>{currentStep.tip}</div>
+        </div>
+
+        <div className="divider" />
+
+        {!hideScript && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)' }}>📄 スクリプト</div>
+              {step === 4 && <span style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>シャドーイングでは不使用</span>}
+            </div>
+            <div className="script-display">{t.script}</div>
+          </div>
+        )}
+
+        {showDictation && (
+          <div>
+            <div style={{ fontWeight: '700', fontSize: '.85rem', color: 'var(--text)', marginBottom: '10px' }}>✍️ 書き起こし</div>
+            <textarea
+              className="dictation-area"
+              placeholder="聞こえた英語をここに書いてください..."
+              value={dictation}
+              onChange={e => setDictation(e.target.value)}
+            />
+            {!showAnswer ? (
+              <button className="btn btn-secondary" style={{ marginTop: '8px', fontSize: '.8rem' }} onClick={() => setShowAnswer(true)}>
+                スクリプトを確認する
+              </button>
+            ) : (
+              <div style={{ marginTop: '10px', padding: '12px', background: 'var(--surface2)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                <div style={{ fontWeight: '700', fontSize: '.8rem', color: 'var(--text-muted)', marginBottom: '6px' }}>正解スクリプト:</div>
+                <div style={{ fontSize: '.85rem', lineHeight: '1.7', color: 'var(--text)' }}>{t.script}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {hideScript && step === 4 && (
+          <div className="script-display" style={{ filter: 'blur(4px)', cursor: 'pointer', userSelect: 'none' }}
+            onClick={e => e.currentTarget.style.filter = 'none'}>
+            {t.script}<br/><span style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>(クリックでスクリプト確認)</span>
+          </div>
+        )}
+
+        <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
+          <button
+            className={`record-btn ${recording ? 'recording' : 'idle'}`}
+            onClick={recording ? stopRecording : startRecording}
+          >
+            <span className="record-dot" />
+            {recording ? '● 録音中... (停止)' : '🎤 録音する'}
+          </button>
+          {!recording && (
+            <button className="btn btn-success" onClick={() => markDone(step)}>
+              ✓ このステップ完了
+            </button>
+          )}
+        </div>
+
+        {recordings.length > 0 && (
+          <div style={{ marginTop: '14px' }}>
+            <div style={{ fontWeight: '700', fontSize: '.8rem', color: 'var(--text-muted)', marginBottom: '8px' }}>🎵 録音履歴</div>
+            {recordings.map((url, i) => (
+              <div key={i} className="audio-player">
+                <span className="audio-icon">🔊</span>
+                <audio controls src={url} style={{ flex: 1, height: '28px' }} />
+                <span style={{ fontSize: '.75rem', color: 'var(--text-light)' }}>録音 #{i + 1}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {doneSteps.length === STEPS.length && (
+        <div className="complete-banner animate-pop">
+          <h3>🏆 全ステップ完了！</h3>
+          <p>5つのトレーニングを全て終えました。今日のリスニング練習は完璧です！</p>
+        </div>
+      )}
+
+      <div className="card" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe' }}>
+        <div style={{ fontWeight: '700', marginBottom: '12px', color: 'var(--primary-dark)' }}>📊 進捗</div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          {STEPS.map((s, i) => (
+            <div key={i} style={{
+              padding: '6px 12px', borderRadius: '20px', fontSize: '.78rem', fontWeight: '600',
+              background: doneSteps.includes(i) ? 'var(--success)' : 'white',
+              color: doneSteps.includes(i) ? 'white' : 'var(--text-muted)',
+              border: `1px solid ${doneSteps.includes(i) ? 'var(--success)' : 'var(--border)'}`,
+            }}>
+              {doneSteps.includes(i) ? '✓ ' : ''}{s.name}
+            </div>
+          ))}
+        </div>
+        <div className="progress-bar" style={{ marginTop: '12px', height: '8px' }}>
+          <div className="progress-fill" style={{ width: `${(doneSteps.length / STEPS.length) * 100}%` }} />
+        </div>
+        <div style={{ fontSize: '.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+          {doneSteps.length} / {STEPS.length} ステップ完了
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ===== MAIN APP =====
+function App() {
+  const today = new Date();
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+  const [dayIdx, setDayIdx] = useState((dayOfYear - 1) % CONTENT_DAYS.length);
+  const [tab, setTab] = useState(0);
+  const [completedSections, setCompletedSections] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('de_completed') || '{}'); } catch { return {}; }
+  });
+  const [streak, setStreak] = useState(() => {
+    try { return parseInt(localStorage.getItem('de_streak') || '0'); } catch { return 0; }
+  });
+
+  const data = CONTENT_DAYS[dayIdx];
+  const dateStr = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+
+  const TABS = [
+    { label: '語彙', icon: '📚', time: '5分' },
+    { label: 'リスニング', icon: '🎧', time: '5分' },
+    { label: '読解', icon: '📰', time: '5分' },
+    { label: 'トレーニング', icon: '🏋️', time: '5分' },
+  ];
+
+  const todayKey = today.toISOString().split('T')[0];
+  const todayCompleted = completedSections[todayKey] || [];
+  const totalProgress = todayCompleted.length;
+
+  const markSectionDone = (idx) => {
+    const updated = { ...completedSections };
+    if (!updated[todayKey]) updated[todayKey] = [];
+    if (!updated[todayKey].includes(idx)) {
+      updated[todayKey] = [...updated[todayKey], idx];
+      setCompletedSections(updated);
+      try { localStorage.setItem('de_completed', JSON.stringify(updated)); } catch {}
+      if (updated[todayKey].length === 4) {
+        const newStreak = streak + 1;
+        setStreak(newStreak);
+        try { localStorage.setItem('de_streak', newStreak); } catch {}
+      }
+    }
+  };
+
+  return (
+    <div>
+      <div className="app-header">
+        <div className="header-inner">
+          <div>
+            <div className="header-title">Daily English 📖</div>
+            <div className="header-date">{dateStr} — {data.date_label}: {data.topic}</div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {[0,1,2,3].map(i => (
+                <div key={i} style={{
+                  width: '10px', height: '10px', borderRadius: '50%',
+                  background: todayCompleted.includes(i) ? '#34d399' : 'rgba(255,255,255,.3)',
+                  border: '1px solid rgba(255,255,255,.5)',
+                  transition: 'all .3s'
+                }} />
+              ))}
+            </div>
+            <div className="header-streak">🔥 {streak}日連続</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="app-container">
+        {/* Day Navigation */}
+        <div className="day-nav" style={{ marginTop: '16px' }}>
+          <button className="day-btn" onClick={() => setDayIdx(d => Math.max(0, d - 1))} disabled={dayIdx === 0}>← 前</button>
+          <div className="day-label">{data.date_label} / {CONTENT_DAYS.length}日分</div>
+          <button className="day-btn" onClick={() => setDayIdx(d => Math.min(CONTENT_DAYS.length - 1, d + 1))} disabled={dayIdx === CONTENT_DAYS.length - 1}>次 →</button>
+        </div>
+
+        {/* Progress Summary */}
+        {totalProgress > 0 && (
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 16px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: 'var(--shadow)' }}>
+            <div style={{ fontSize: '.85rem', color: 'var(--text-muted)', fontWeight: '600' }}>今日の進捗</div>
+            <div style={{ flex: 1 }}>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${(totalProgress / 4) * 100}%` }} />
+              </div>
+            </div>
+            <div style={{ fontSize: '.85rem', fontWeight: '700', color: 'var(--primary)' }}>{totalProgress}/4</div>
+          </div>
+        )}
+
+        {/* Tabs */}
+        <div className="section-tabs">
+          {TABS.map((t, i) => (
+            <button key={i} className={`tab-btn ${tab === i ? 'active' : ''}`} onClick={() => setTab(i)}>
+              <span className="tab-num">{todayCompleted.includes(i) ? '✓' : i + 1}</span>
+              {t.icon} {t.label}
+              <span style={{ fontSize: '.7rem', opacity: .8 }}>{t.time}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        {tab === 0 && <VocabSection data={data} key={`vocab-${dayIdx}`} />}
+        {tab === 1 && <ListeningSection data={data} key={`listen-${dayIdx}`} />}
+        {tab === 2 && <ReadingSection data={data} key={`reading-${dayIdx}`} />}
+        {tab === 3 && <TrainingSection data={data} key={`training-${dayIdx}`} />}
+
+        {/* Complete Section Button */}
+        <div style={{ textAlign: 'right', marginTop: '8px' }}>
+          {!todayCompleted.includes(tab) && (
+            <button className="btn btn-success" onClick={() => markSectionDone(tab)}>
+              ✓ このセクションを完了にする
+            </button>
+          )}
+          {todayCompleted.includes(tab) && (
+            <span style={{ color: 'var(--success)', fontWeight: '700', fontSize: '.85rem' }}>✓ 完了済み</span>
+          )}
+        </div>
+
+        {/* Completed All Today */}
+        {totalProgress === 4 && (
+          <div className="complete-banner animate-pop" style={{ marginTop: '20px' }}>
+            <h3>🎉 今日の学習完了！</h3>
+            <p>15分の英語学習を全て終えました。素晴らしい！明日も続けましょう。連続{streak}日達成！</p>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div style={{ textAlign: 'center', marginTop: '32px', padding: '20px', borderTop: '1px solid var(--border)', color: 'var(--text-light)', fontSize: '.75rem' }}>
+          Daily English — 毎日15分で英語力アップ<br/>
+          語彙・リスニング・読解・トレーニングの4ステップ
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
