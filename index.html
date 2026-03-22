@@ -113,8 +113,8 @@
     .timer-progress { flex:1; height:6px; background: var(--surface2); border-radius: 3px; overflow:hidden; }
     .timer-progress-fill { height:100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width .5s linear; }
     .timer-btn { padding: 8px 14px; border-radius: 8px; border: none; cursor:pointer; font-size: .8rem; font-weight: 600; transition: all .2s; }
-    .timer-btn.start { background: var(--primary); color: white; }
-    .timer-btn.pause { background: var(--warning); color: white; }
+    .timer-btn.start { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+    .timer-btn.pause { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
     .timer-btn.reset { background: var(--surface2); color: var(--text-muted); }
     .timer-btn:hover { filter: brightness(1.1); }
 
@@ -245,11 +245,12 @@
     .speak-btn-lg:hover { background: var(--primary); color: white; border-color: var(--primary); }
     .speak-btn-lg.speaking { background: var(--primary); color: white; animation: pulse .8s ease infinite; }
 
-    .script-player { background: var(--surface2); border-radius:12px; padding:14px; border:1px solid var(--border); margin-bottom:14px; }
+    .script-player { background: #eef2ff; border-radius:12px; padding:14px; border:2px solid var(--primary-light); margin-bottom:14px; }
+    .script-player-header { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:8px; letter-spacing:.05em; }
     .script-player-controls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-    .player-btn { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; border:none; cursor:pointer; font-size:1rem; transition:all .2s; }
-    .player-btn.play { background:var(--primary); color:white; }
-    .player-btn.play:hover { background:var(--primary-dark); }
+    .player-btn { display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:50%; border:none; cursor:pointer; font-size:1.1rem; transition:all .2s; }
+    .player-btn.play { background:var(--primary); color:white; box-shadow: 0 4px 12px rgba(79,70,229,.4); }
+    .player-btn.play:hover { background:var(--primary-dark); transform: scale(1.08); }
     .player-btn.stop { background:var(--surface); color:var(--text-muted); border:1px solid var(--border); }
     .player-btn.stop:hover { background:var(--surface2); }
     .speed-select { padding:4px 8px; border-radius:6px; border:1px solid var(--border); font-size:.78rem; font-weight:600; color:var(--text); background:var(--surface); cursor:pointer; }
@@ -960,8 +961,8 @@ function Timer({ totalSeconds = 300 }) {
       </div>
       <button className="timer-btn reset" onClick={reset}>↺</button>
       {running
-        ? <button className="timer-btn pause" onClick={pause}>⏸ 一時停止</button>
-        : <button className="timer-btn start" onClick={start}>▶ スタート</button>
+        ? <button className="timer-btn pause" onClick={pause}>⏸ タイマー停止</button>
+        : <button className="timer-btn start" onClick={start}>⏱ タイマー開始</button>
       }
     </div>
   );
@@ -1123,6 +1124,7 @@ function ScriptPlayer({ script, label = 'スクリプトを聞く' }) {
 
   return (
     <div className="script-player">
+      <div className="script-player-header">🔊 音声再生プレイヤー</div>
       <div className="script-player-controls">
         <button className={`player-btn play`} onClick={play} title={speaking ? '停止' : '再生'}>
           {speaking ? '⏹' : '▶'}
