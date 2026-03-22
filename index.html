@@ -307,6 +307,55 @@
     .summary-num { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
     .summary-label { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
 
+    /* Review Section */
+    .review-search { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+    .review-search-input {
+      flex:1; min-width:180px; padding:10px 14px; border-radius:8px; border:2px solid var(--border);
+      font-family:inherit; font-size:.85rem; outline:none; transition: border-color .2s;
+    }
+    .review-search-input:focus { border-color: var(--primary); }
+    .review-filter-btns { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:14px; }
+    .filter-btn {
+      padding:6px 12px; border-radius:20px; border:1.5px solid var(--border);
+      background:var(--surface); color:var(--text-muted); cursor:pointer;
+      font-size:.75rem; font-weight:600; transition:all .2s; white-space:nowrap;
+    }
+    .filter-btn:hover { border-color:var(--primary-light); color:var(--primary); }
+    .filter-btn.active { border-color:var(--primary); background:var(--primary); color:white; }
+    .review-day-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px; border-radius:8px; cursor:pointer;
+      background:var(--surface2); border:1px solid var(--border);
+      margin-bottom:6px; transition: all .2s;
+    }
+    .review-day-header:hover { background:#eef2ff; border-color:var(--primary-light); }
+    .review-day-title { font-weight:700; font-size:.9rem; color:var(--text); }
+    .review-day-topic { font-size:.75rem; color:var(--text-muted); }
+    .review-category { font-size:.7rem; font-weight:700; color:var(--primary); padding:4px 10px; background:#eef2ff; border-radius:6px; margin:10px 0 6px; display:inline-block; }
+    .review-word-row {
+      display:flex; align-items:center; gap:8px; padding:8px 10px;
+      border-bottom:1px solid var(--border); transition: background .15s;
+    }
+    .review-word-row:hover { background:#f8faff; }
+    .review-word-row:last-child { border-bottom:none; }
+    .review-word { font-weight:600; color:var(--primary-dark); font-size:.85rem; min-width:180px; }
+    .review-meaning { font-size:.82rem; color:var(--text-muted); flex:1; }
+    .review-example { font-size:.78rem; color:var(--text-light); font-style:italic; }
+    .review-count { font-size:.75rem; color:var(--text-light); padding:2px 8px; background:var(--surface2); border-radius:10px; }
+    .review-expr-card { padding:10px 14px; background:linear-gradient(135deg,#eef2ff,#e0e7ff); border-radius:8px; border:1px solid #c7d2fe; margin-bottom:6px; }
+    .review-expr-text { font-weight:700; color:var(--primary-dark); font-size:.85rem; }
+    .review-expr-usage { font-size:.72rem; color:var(--primary); margin-top:2px; }
+    .review-expr-eg { font-size:.78rem; color:var(--text-muted); font-style:italic; margin-top:4px; }
+    .update-btn {
+      display:flex; align-items:center; gap:6px; padding:8px 16px;
+      border-radius:8px; border:2px solid var(--secondary); background:#f0f9ff;
+      color:var(--secondary); cursor:pointer; font-size:.85rem; font-weight:700;
+      transition:all .2s;
+    }
+    .update-btn:hover { background:var(--secondary); color:white; }
+    .update-spin { display:inline-block; animation: spin .6s linear; }
+    @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+
     @media (max-width: 640px) {
       .app-header { padding: 14px 16px; }
       .header-title { font-size: 1rem; }
@@ -1600,6 +1649,144 @@ function TrainingSection({ data }) {
   );
 }
 
+// ===== REVIEW SECTION =====
+function ReviewSection() {
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [openDays, setOpenDays] = useState([]);
+
+  const toggleDay = (i) => setOpenDays(d => d.includes(i) ? d.filter(x => x !== i) : [...d, i]);
+  const openAll = () => setOpenDays(CONTENT_DAYS.map((_, i) => i));
+  const closeAll = () => setOpenDays([]);
+
+  const FILTERS = [
+    { key: 'all', label: 'すべて' },
+    { key: 'vocab', label: '📚 語彙' },
+    { key: 'listening', label: '🎧 リスニング語彙' },
+    { key: 'reading', label: '📰 読解語彙' },
+    { key: 'expressions', label: '💬 会議表現' },
+  ];
+
+  const matchSearch = (text) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return text.toLowerCase().includes(q);
+  };
+
+  // Count total items
+  let totalCount = 0;
+  CONTENT_DAYS.forEach(d => {
+    if (filter === 'all' || filter === 'vocab') totalCount += d.vocabulary.filter(v => matchSearch(v.word + v.meaning + v.example)).length;
+    if (filter === 'all' || filter === 'listening') totalCount += d.listening.vocabList.filter(v => matchSearch(v.word + v.meaning)).length;
+    if (filter === 'all' || filter === 'reading') totalCount += d.reading.vocabList.filter(v => matchSearch(v.word + v.meaning)).length;
+    if (filter === 'all' || filter === 'expressions') totalCount += d.reading.expressions.filter(e => matchSearch(e.expr + e.usage + e.eg)).length;
+  });
+
+  return (
+    <div className="fade-in">
+      <div className="card">
+        <div className="card-title"><span>📋</span> 単語・表現 復習リスト <span className="review-count">{totalCount}件</span></div>
+        <div className="review-search">
+          <input
+            className="review-search-input"
+            placeholder="🔍 単語・表現を検索..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="review-filter-btns">
+          {FILTERS.map(f => (
+            <button key={f.key} className={`filter-btn ${filter === f.key ? 'active' : ''}`}
+              onClick={() => setFilter(f.key)}>{f.label}</button>
+          ))}
+          <button className="filter-btn" onClick={openAll} style={{marginLeft:'auto'}}>全て開く</button>
+          <button className="filter-btn" onClick={closeAll}>閉じる</button>
+        </div>
+      </div>
+
+      {CONTENT_DAYS.map((day, di) => {
+        const vocabItems = (filter === 'all' || filter === 'vocab') ? day.vocabulary.filter(v => matchSearch(v.word + v.meaning + v.example)) : [];
+        const listenItems = (filter === 'all' || filter === 'listening') ? day.listening.vocabList.filter(v => matchSearch(v.word + v.meaning)) : [];
+        const readItems = (filter === 'all' || filter === 'reading') ? day.reading.vocabList.filter(v => matchSearch(v.word + v.meaning)) : [];
+        const exprItems = (filter === 'all' || filter === 'expressions') ? day.reading.expressions.filter(e => matchSearch(e.expr + e.usage + e.eg)) : [];
+        const count = vocabItems.length + listenItems.length + readItems.length + exprItems.length;
+        if (count === 0) return null;
+
+        const isOpen = openDays.includes(di);
+        return (
+          <div key={di} className="card" style={{ padding: '10px 14px' }}>
+            <div className="review-day-header" onClick={() => toggleDay(di)}>
+              <div>
+                <span className="review-day-title">{day.date_label}</span>
+                <span className="review-day-topic"> — {day.topic}</span>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                <span className="review-count">{count}語</span>
+                <span style={{color:'var(--text-light)',fontSize:'.8rem'}}>{isOpen ? '▲' : '▼'}</span>
+              </div>
+            </div>
+            {isOpen && (
+              <div className="fade-in" style={{padding:'6px 0'}}>
+                {vocabItems.length > 0 && (
+                  <div>
+                    <div className="review-category">📚 語彙（{vocabItems.length}語）</div>
+                    {vocabItems.map((v, i) => (
+                      <div key={i} className="review-word-row">
+                        <SpeakBtn text={v.word} />
+                        <span className="review-word">{v.word}</span>
+                        <span className="review-meaning">{v.meaning}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {listenItems.length > 0 && (
+                  <div>
+                    <div className="review-category">🎧 リスニング語彙（{listenItems.length}語）</div>
+                    {listenItems.map((v, i) => (
+                      <div key={i} className="review-word-row">
+                        <SpeakBtn text={v.word} />
+                        <span className="review-word">{v.word}</span>
+                        <span className="review-meaning">{v.meaning}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {readItems.length > 0 && (
+                  <div>
+                    <div className="review-category">📰 読解語彙（{readItems.length}語）</div>
+                    {readItems.map((v, i) => (
+                      <div key={i} className="review-word-row">
+                        <SpeakBtn text={v.word} />
+                        <span className="review-word">{v.word}</span>
+                        <span className="review-meaning">{v.meaning}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {exprItems.length > 0 && (
+                  <div>
+                    <div className="review-category">💬 会議表現（{exprItems.length}つ）</div>
+                    {exprItems.map((e, i) => (
+                      <div key={i} className="review-expr-card">
+                        <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                          <SpeakBtn text={e.expr} />
+                          <span className="review-expr-text">{e.expr}</span>
+                        </div>
+                        <div className="review-expr-usage">● {e.usage}</div>
+                        <div className="review-expr-eg">例: {e.eg}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ===== MAIN APP =====
 function App() {
   const today = new Date();
@@ -1616,12 +1803,23 @@ function App() {
   const data = CONTENT_DAYS[dayIdx];
   const dateStr = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
 
+  const [updating, setUpdating] = useState(false);
+
   const TABS = [
     { label: '語彙', icon: '📚', time: '5分' },
     { label: 'リスニング', icon: '🎧', time: '5分' },
     { label: '読解', icon: '📰', time: '5分' },
     { label: 'トレーニング', icon: '🏋️', time: '5分' },
+    { label: '復習', icon: '📋', time: '' },
   ];
+
+  const handleUpdate = () => {
+    setUpdating(true);
+    setTimeout(() => {
+      setDayIdx(d => (d + 1) % CONTENT_DAYS.length);
+      setUpdating(false);
+    }, 500);
+  };
 
   const todayKey = today.toISOString().split('T')[0];
   const todayCompleted = completedSections[todayKey] || [];
@@ -1669,9 +1867,13 @@ function App() {
       <div className="app-container">
         {/* Day Navigation */}
         <div className="day-nav" style={{ marginTop: '16px' }}>
-          <button className="day-btn" onClick={() => setDayIdx(d => Math.max(0, d - 1))} disabled={dayIdx === 0}>← 前</button>
+          <button className="day-btn" onClick={() => setDayIdx(d => (d - 1 + CONTENT_DAYS.length) % CONTENT_DAYS.length)}>← 前</button>
           <div className="day-label">{data.date_label} / {CONTENT_DAYS.length}日分</div>
-          <button className="day-btn" onClick={() => setDayIdx(d => Math.min(CONTENT_DAYS.length - 1, d + 1))} disabled={dayIdx === CONTENT_DAYS.length - 1}>次 →</button>
+          <button className="day-btn" onClick={() => setDayIdx(d => (d + 1) % CONTENT_DAYS.length)}>次 →</button>
+          <button className="update-btn" onClick={handleUpdate} disabled={updating}>
+            <span className={updating ? 'update-spin' : ''}>🔄</span>
+            {updating ? '更新中...' : 'コンテンツ更新'}
+          </button>
         </div>
 
         {/* Progress Summary */}
@@ -1693,7 +1895,7 @@ function App() {
             <button key={i} className={`tab-btn ${tab === i ? 'active' : ''}`} onClick={() => setTab(i)}>
               <span className="tab-num">{todayCompleted.includes(i) ? '✓' : i + 1}</span>
               {t.icon} {t.label}
-              <span style={{ fontSize: '.7rem', opacity: .8 }}>{t.time}</span>
+              {t.time && <span style={{ fontSize: '.7rem', opacity: .8 }}>{t.time}</span>}
             </button>
           ))}
         </div>
@@ -1703,18 +1905,21 @@ function App() {
         {tab === 1 && <ListeningSection data={data} key={`listen-${dayIdx}`} />}
         {tab === 2 && <ReadingSection data={data} key={`reading-${dayIdx}`} />}
         {tab === 3 && <TrainingSection data={data} key={`training-${dayIdx}`} />}
+        {tab === 4 && <ReviewSection key="review" />}
 
-        {/* Complete Section Button */}
-        <div style={{ textAlign: 'right', marginTop: '8px' }}>
-          {!todayCompleted.includes(tab) && (
-            <button className="btn btn-success" onClick={() => markSectionDone(tab)}>
-              ✓ このセクションを完了にする
-            </button>
-          )}
-          {todayCompleted.includes(tab) && (
-            <span style={{ color: 'var(--success)', fontWeight: '700', fontSize: '.85rem' }}>✓ 完了済み</span>
-          )}
-        </div>
+        {/* Complete Section Button (not for review tab) */}
+        {tab < 4 && (
+          <div style={{ textAlign: 'right', marginTop: '8px' }}>
+            {!todayCompleted.includes(tab) && (
+              <button className="btn btn-success" onClick={() => markSectionDone(tab)}>
+                ✓ このセクションを完了にする
+              </button>
+            )}
+            {todayCompleted.includes(tab) && (
+              <span style={{ color: 'var(--success)', fontWeight: '700', fontSize: '.85rem' }}>✓ 完了済み</span>
+            )}
+          </div>
+        )}
 
         {/* Completed All Today */}
         {totalProgress === 4 && (
