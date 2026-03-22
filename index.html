@@ -1017,6 +1017,232 @@ I would like each division to present their implementation roadmap by end of nex
   },
 ];
 
+// ===== EXTRA CONTENT POOL (for offline generation) =====
+const EXTRA_TOPICS = [
+  {
+    topic: "半導体・製造",
+    words: [
+      { word: "semiconductor", phonetic: "/ˌsemikənˈdʌktər/", meaning: "半導体", tags: ["製造","IT"], example: "Japan is investing heavily in semiconductor manufacturing.", exampleJa: "日本は半導体製造に大規模な投資をしています。" },
+      { word: "subsidy", phonetic: "/ˈsʌbsɪdi/", meaning: "補助金", tags: ["経済","政治"], example: "The government offered subsidies to attract chip factories.", exampleJa: "政府はチップ工場を誘致するために補助金を提供しました。" },
+      { word: "mass production", phonetic: "/mæs prəˈdʌkʃn/", meaning: "大量生産", tags: ["製造"], example: "Mass production will begin in the second half of next year.", exampleJa: "来年下半期に大量生産が開始されます。" },
+      { word: "cutting-edge", phonetic: "/ˈkʌtɪŋ edʒ/", meaning: "最先端の", tags: ["IT","技術"], example: "The facility will produce cutting-edge 2-nanometer chips.", exampleJa: "この施設は最先端の2ナノメートルチップを製造します。" },
+      { word: "global supply chain", phonetic: "/ˈɡloʊbl səˈplaɪ tʃeɪn/", meaning: "グローバルサプライチェーン", tags: ["貿易","製造"], example: "Disruptions in the global supply chain affected production.", exampleJa: "グローバルサプライチェーンの混乱が生産に影響しました。" },
+      { word: "competitiveness", phonetic: "/kəmˈpetɪtɪvnəs/", meaning: "競争力", tags: ["ビジネス"], example: "Japan aims to restore its competitiveness in the chip industry.", exampleJa: "日本はチップ産業における競争力の回復を目指しています。" },
+      { word: "joint venture", phonetic: "/dʒɔɪnt ˈventʃər/", meaning: "合弁事業", tags: ["ビジネス"], example: "The two companies formed a joint venture for chip development.", exampleJa: "2社はチップ開発のための合弁事業を設立しました。" },
+      { word: "domestic demand", phonetic: "/dəˈmestɪk dɪˈmænd/", meaning: "国内需要", tags: ["経済"], example: "Domestic demand for semiconductors has risen sharply.", exampleJa: "半導体の国内需要が急増しています。" },
+    ],
+    script: { title: "Japan Revives Semiconductor Industry", text: "Japan has launched a major initiative to revive its semiconductor industry with government subsidies exceeding 4 trillion yen. A new cutting-edge factory in Kumamoto has begun mass production of advanced chips, attracting global attention. The facility is a joint venture between Japanese and international companies. Officials say this investment will strengthen the domestic supply chain and reduce dependence on foreign manufacturers. Industry experts believe Japan can regain its competitiveness in the global chip market within the next decade.", blankCandidates: [{ w: "initiative", h: "(構想)" }, { w: "revive", h: "(復活させる)" }, { w: "subsidies", h: "(補助金)" }, { w: "cutting-edge", h: "(最先端の)" }, { w: "mass production", h: "(大量生産)" }, { w: "joint venture", h: "(合弁事業)" }, { w: "supply chain", h: "(サプライチェーン)" }, { w: "dependence", h: "(依存)" }, { w: "competitiveness", h: "(競争力)" }, { w: "global", h: "(世界的な)" }], quiz: [{ q: "How much are government subsidies?", opts: ["2 trillion yen", "3 trillion yen", "4 trillion yen", "5 trillion yen"], ans: 2 }, { q: "Where is the new factory located?", opts: ["Tokyo", "Osaka", "Kumamoto", "Hokkaido"], ans: 2 }, { q: "When could Japan regain competitiveness?", opts: ["5 years", "10 years", "15 years", "20 years"], ans: 1 }], vocabList: [{ word: "initiative", meaning: "構想・取り組み" }, { word: "subsidies", meaning: "補助金" }, { word: "mass production", meaning: "大量生産" }, { word: "dependence", meaning: "依存" }, { word: "regain", meaning: "取り戻す" }] },
+    reading: { title: "Manufacturing Strategy Meeting", text: "Good morning. Today's agenda is our manufacturing strategy review. As you know, our production costs have increased by 18% due to raw material price hikes. We need to address this urgently.\n\nI propose three countermeasures. First, we should negotiate long-term contracts with key suppliers to lock in prices. Second, we need to accelerate automation in our Nagoya plant, which could reduce labor costs by 25%. Third, let's explore alternative materials that meet our quality standards.\n\nRegarding our expansion plans, the board has approved construction of a new facility in Vietnam. This will increase our total capacity by 40% and provide a hedge against domestic labor shortages.\n\nI'd like each department to submit cost reduction proposals by next Friday.", vocabList: [{ word: "raw material", meaning: "原材料" }, { word: "price hike", meaning: "価格高騰" }, { word: "countermeasure", meaning: "対策" }, { word: "lock in prices", meaning: "価格を固定する" }, { word: "automation", meaning: "自動化" }, { word: "alternative materials", meaning: "代替材料" }], grammar: { point: "提案の3段構成", explain: "'I propose three countermeasures. First,...Second,...Third,...' は複数の提案を明確に整理して伝える定番の構文。数を最初に示すことで聞き手の理解を助ける。", examples: ["I propose three countermeasures.", "First, we should negotiate long-term contracts.", "Third, let's explore alternative materials."] }, quiz: [{ q: "How much have production costs increased?", opts: ["12%", "15%", "18%", "22%"], ans: 2 }, { q: "Where is the new facility planned?", opts: ["Thailand", "Vietnam", "Indonesia", "Philippines"], ans: 1 }, { q: "By how much could automation reduce labor costs?", opts: ["15%", "20%", "25%", "30%"], ans: 2 }], expressions: [{ expr: "We need to address this urgently.", usage: "緊急の対応を求める", eg: "We need to address the supply shortage urgently." }, { expr: "I'd like each department to submit...", usage: "各部門への依頼", eg: "I'd like each department to submit proposals by Friday." }, { expr: "This will provide a hedge against...", usage: "リスクヘッジの説明", eg: "This will provide a hedge against currency fluctuations." }] },
+  },
+  {
+    topic: "スタートアップ",
+    words: [
+      { word: "venture capital", phonetic: "/ˈventʃər ˈkæpɪtl/", meaning: "ベンチャーキャピタル", tags: ["投資","起業"], example: "The startup raised $50 million in venture capital.", exampleJa: "そのスタートアップはベンチャーキャピタルから5000万ドルを調達しました。" },
+      { word: "IPO", phonetic: "/ˌaɪ piː ˈoʊ/", meaning: "新規株式公開", tags: ["投資"], example: "The company is preparing for an IPO next year.", exampleJa: "その会社は来年のIPOを準備しています。" },
+      { word: "disruptive innovation", phonetic: "/dɪsˈrʌptɪv ˌɪnəˈveɪʃn/", meaning: "破壊的イノベーション", tags: ["ビジネス","IT"], example: "AI is driving disruptive innovation across industries.", exampleJa: "AIが産業全体で破壊的イノベーションを推進しています。" },
+      { word: "pivot", phonetic: "/ˈpɪvət/", meaning: "事業転換・ピボット", tags: ["起業"], example: "The company decided to pivot from hardware to software.", exampleJa: "その会社はハードウェアからソフトウェアへのピボットを決定しました。" },
+      { word: "burn rate", phonetic: "/bɜːrn reɪt/", meaning: "バーンレート（資金消費速度）", tags: ["起業","財務"], example: "We need to reduce our burn rate to extend our runway.", exampleJa: "ランウェイを延ばすためにバーンレートを下げる必要があります。" },
+      { word: "scalable", phonetic: "/ˈskeɪləbl/", meaning: "スケーラブル（拡張可能な）", tags: ["IT","ビジネス"], example: "Our business model must be scalable from day one.", exampleJa: "私たちのビジネスモデルは初日からスケーラブルでなければなりません。" },
+      { word: "unicorn", phonetic: "/ˈjuːnɪkɔːrn/", meaning: "ユニコーン企業（評価額10億ドル超）", tags: ["起業"], example: "Japan has produced several unicorn companies in recent years.", exampleJa: "日本は近年いくつかのユニコーン企業を生み出しています。" },
+      { word: "seed funding", phonetic: "/siːd ˈfʌndɪŋ/", meaning: "シードファンディング（初期資金）", tags: ["投資","起業"], example: "They secured seed funding of 100 million yen.", exampleJa: "彼らは1億円のシードファンディングを確保しました。" },
+    ],
+    script: { title: "Tokyo Startup Ecosystem Booms", text: "Tokyo's startup ecosystem has experienced remarkable growth, with venture capital investment reaching a record 1.2 trillion yen last year. The government's startup promotion policy has attracted both domestic and international entrepreneurs. Several Japanese unicorn companies have successfully completed IPOs on the Tokyo Stock Exchange. However, experts note that Japan still lags behind Silicon Valley in terms of risk tolerance and talent mobility. The government plans to establish ten new startup hubs across the country to encourage regional innovation and entrepreneurship.", blankCandidates: [{ w: "ecosystem", h: "(エコシステム)" }, { w: "remarkable", h: "(顕著な)" }, { w: "venture capital", h: "(ベンチャーキャピタル)" }, { w: "entrepreneurs", h: "(起業家)" }, { w: "unicorn", h: "(ユニコーン)" }, { w: "IPOs", h: "(新規株式公開)" }, { w: "tolerance", h: "(許容度)" }, { w: "mobility", h: "(流動性)" }, { w: "innovation", h: "(イノベーション)" }, { w: "establish", h: "(設立する)" }], quiz: [{ q: "How much VC investment was recorded?", opts: ["800 billion yen", "1 trillion yen", "1.2 trillion yen", "1.5 trillion yen"], ans: 2 }, { q: "What does Japan lag behind in?", opts: ["Technology", "Risk tolerance and talent mobility", "Funding amounts", "Number of startups"], ans: 1 }, { q: "How many startup hubs are planned?", opts: ["5", "8", "10", "15"], ans: 2 }], vocabList: [{ word: "ecosystem", meaning: "エコシステム" }, { word: "entrepreneurs", meaning: "起業家" }, { word: "risk tolerance", meaning: "リスク許容度" }, { word: "talent mobility", meaning: "人材流動性" }, { word: "entrepreneurship", meaning: "起業家精神" }] },
+    reading: { title: "Startup Pitch Review Meeting", text: "Welcome to our quarterly pitch review. Today we'll evaluate three startup proposals for potential investment. The first candidate is an AI-powered legal tech company seeking 500 million yen in Series A funding.\n\nTheir product automates contract review, reducing processing time by 80%. Current monthly recurring revenue stands at 30 million yen, with a month-over-month growth rate of 15%. The team has strong domain expertise with former partners from major law firms.\n\nHowever, I have concerns about their burn rate, which gives them only eight months of runway at the current spending level. Before we proceed, we need to assess their path to profitability and competitive moat.\n\nWhat are your thoughts on the valuation they're proposing?", vocabList: [{ word: "Series A funding", meaning: "シリーズA資金調達" }, { word: "recurring revenue", meaning: "継続的収益（MRR）" }, { word: "month-over-month", meaning: "前月比" }, { word: "domain expertise", meaning: "専門知識" }, { word: "runway", meaning: "資金が持つ期間" }, { word: "competitive moat", meaning: "競争上の優位性" }], grammar: { point: "評価・懸念の表現", explain: "'I have concerns about...'（〜について懸念がある）は投資判断会議で頻出。'Before we proceed, we need to assess...'（進める前に〜を評価する必要がある）はリスク確認の定番。", examples: ["I have concerns about their burn rate.", "Before we proceed, we need to assess their path to profitability.", "What are your thoughts on the valuation?"] }, quiz: [{ q: "How much funding is the startup seeking?", opts: ["200 million yen", "300 million yen", "500 million yen", "800 million yen"], ans: 2 }, { q: "By how much does the product reduce processing time?", opts: ["60%", "70%", "80%", "90%"], ans: 2 }, { q: "How many months of runway do they have?", opts: ["6 months", "8 months", "10 months", "12 months"], ans: 1 }], expressions: [{ expr: "I have concerns about...", usage: "懸念点を指摘する", eg: "I have concerns about their path to profitability." }, { expr: "Before we proceed, we need to assess...", usage: "次のステップの前提条件を示す", eg: "Before we proceed, we need to assess the risk." }, { expr: "What are your thoughts on...?", usage: "意見を求める（カジュアル）", eg: "What are your thoughts on this valuation?" }] },
+  },
+  {
+    topic: "観光・インバウンド",
+    words: [
+      { word: "inbound tourism", phonetic: "/ˈɪnbaʊnd ˈtʊərɪzəm/", meaning: "インバウンド観光", tags: ["観光"], example: "Inbound tourism has surpassed pre-pandemic levels.", exampleJa: "インバウンド観光がコロナ前の水準を超えました。" },
+      { word: "overtourism", phonetic: "/ˌoʊvərˈtʊərɪzəm/", meaning: "オーバーツーリズム", tags: ["観光","社会"], example: "Kyoto is struggling with overtourism in popular areas.", exampleJa: "京都は人気エリアでのオーバーツーリズムに苦慮しています。" },
+      { word: "visitor spending", phonetic: "/ˈvɪzɪtər ˈspendɪŋ/", meaning: "訪日客消費額", tags: ["観光","経済"], example: "Visitor spending reached 8 trillion yen last year.", exampleJa: "訪日客消費額が昨年8兆円に達しました。" },
+      { word: "accommodation", phonetic: "/əˌkɒməˈdeɪʃn/", meaning: "宿泊施設", tags: ["観光"], example: "There is a shortage of accommodation in rural tourist areas.", exampleJa: "地方の観光地では宿泊施設が不足しています。" },
+      { word: "cultural heritage", phonetic: "/ˈkʌltʃərəl ˈherɪtɪdʒ/", meaning: "文化遺産", tags: ["観光","文化"], example: "Japan promotes its rich cultural heritage to attract visitors.", exampleJa: "日本は豊かな文化遺産をアピールして観光客を誘致しています。" },
+      { word: "sustainable tourism", phonetic: "/səˈsteɪnəbl ˈtʊərɪzəm/", meaning: "持続可能な観光", tags: ["観光","ESG"], example: "Local governments are adopting sustainable tourism strategies.", exampleJa: "地方自治体は持続可能な観光戦略を採用しています。" },
+      { word: "exchange rate", phonetic: "/ɪksˈtʃeɪndʒ reɪt/", meaning: "為替レート", tags: ["経済","金融"], example: "The weak yen has made Japan more attractive due to favorable exchange rates.", exampleJa: "円安により有利な為替レートで日本の魅力が高まっています。" },
+    ],
+    script: { title: "Japan's Tourism Boom Brings Challenges", text: "Japan welcomed a record 35 million foreign visitors last year, driven by the weak yen and relaxed visa requirements. Visitor spending reached an unprecedented 8 trillion yen, boosting local economies across the country. However, popular destinations like Kyoto and Mount Fuji are struggling with overtourism, prompting authorities to implement crowd control measures and entrance fees. The government is now promoting lesser-known destinations to distribute tourist flows more evenly and encourage sustainable tourism practices in rural communities.", blankCandidates: [{ w: "welcomed", h: "(迎えた)" }, { w: "foreign", h: "(外国の)" }, { w: "unprecedented", h: "(前例のない)" }, { w: "boosting", h: "(押し上げる)" }, { w: "overtourism", h: "(オーバーツーリズム)" }, { w: "implement", h: "(実施する)" }, { w: "entrance fees", h: "(入場料)" }, { w: "promoting", h: "(促進する)" }, { w: "distribute", h: "(分散させる)" }, { w: "sustainable", h: "(持続可能な)" }], quiz: [{ q: "How many foreign visitors came last year?", opts: ["25 million", "30 million", "35 million", "40 million"], ans: 2 }, { q: "How much did visitors spend?", opts: ["5 trillion yen", "6 trillion yen", "8 trillion yen", "10 trillion yen"], ans: 2 }, { q: "What is the government promoting?", opts: ["Major cities", "Theme parks", "Lesser-known destinations", "Shopping areas"], ans: 2 }], vocabList: [{ word: "visa requirements", meaning: "ビザ要件" }, { word: "unprecedented", meaning: "前例のない" }, { word: "crowd control", meaning: "混雑制御" }, { word: "entrance fees", meaning: "入場料" }, { word: "lesser-known", meaning: "あまり知られていない" }] },
+    reading: { title: "Tourism Strategy Committee", text: "Thank you for coming to today's tourism strategy meeting. Our region welcomed 2.5 million visitors last year, a 40% increase from the previous year. While this has been excellent for our local economy, we're facing significant infrastructure challenges.\n\nTransportation capacity is our biggest bottleneck. Our bus network can only handle 60% of peak demand. I recommend we introduce a digital reservation system and explore partnerships with ride-sharing services.\n\nWe also need to diversify our offerings beyond the traditional cherry blossom season. Our data shows that 70% of visitors come during just three months. We should develop winter and autumn programs to achieve year-round tourism.\n\nCan we agree on a target of distributing visitors more evenly across all four seasons?", vocabList: [{ word: "infrastructure", meaning: "インフラ" }, { word: "transportation capacity", meaning: "輸送能力" }, { word: "peak demand", meaning: "ピーク需要" }, { word: "reservation system", meaning: "予約システム" }, { word: "diversify", meaning: "多様化する" }, { word: "year-round", meaning: "通年の" }], grammar: { point: "データで裏付ける表現", explain: "'Our data shows that 70% of visitors come during...'（データによると70%の訪問者が〜に来る）はデータを根拠に提案する際の必須パターン。'a 40% increase from...'も具体的な変化を伝える定番。", examples: ["Our data shows that 70% of visitors come during three months.", "We welcomed 2.5 million visitors, a 40% increase.", "Our bus network can only handle 60% of peak demand."] }, quiz: [{ q: "How many visitors did the region welcome?", opts: ["1.5 million", "2.0 million", "2.5 million", "3.0 million"], ans: 2 }, { q: "What percentage of peak demand can buses handle?", opts: ["50%", "55%", "60%", "65%"], ans: 2 }, { q: "How many months account for 70% of visitors?", opts: ["2", "3", "4", "5"], ans: 1 }], expressions: [{ expr: "While this has been excellent for..., we're facing...", usage: "良い面と課題を同時に提示", eg: "While revenue is up, we're facing staffing challenges." }, { expr: "I recommend we introduce...", usage: "具体策を推奨する", eg: "I recommend we introduce a digital booking system." }, { expr: "Can we agree on a target of...?", usage: "合意形成を求める", eg: "Can we agree on a target of 3 million visitors?" }] },
+  },
+  {
+    topic: "教育改革",
+    words: [
+      { word: "curriculum reform", phonetic: "/kəˈrɪkjʊləm rɪˈfɔːrm/", meaning: "カリキュラム改革", tags: ["教育"], example: "The ministry announced a major curriculum reform for 2025.", exampleJa: "文部科学省は2025年の大規模なカリキュラム改革を発表しました。" },
+      { word: "digital literacy", phonetic: "/ˈdɪdʒɪtl ˈlɪtərəsi/", meaning: "デジタルリテラシー", tags: ["教育","IT"], example: "Schools are prioritizing digital literacy education.", exampleJa: "学校はデジタルリテラシー教育を優先しています。" },
+      { word: "STEM education", phonetic: "/stem ˌedʒʊˈkeɪʃn/", meaning: "STEM教育（理数系教育）", tags: ["教育"], example: "Investment in STEM education has doubled over five years.", exampleJa: "STEM教育への投資が5年間で倍増しました。" },
+      { word: "enrollment", phonetic: "/ɪnˈroʊlmənt/", meaning: "入学者数・在籍数", tags: ["教育"], example: "University enrollment is declining due to the shrinking population.", exampleJa: "人口減少により大学入学者数が減少しています。" },
+      { word: "lifelong learning", phonetic: "/ˈlaɪflɒŋ ˈlɜːrnɪŋ/", meaning: "生涯学習", tags: ["教育","人事"], example: "Companies are investing in lifelong learning programs for employees.", exampleJa: "企業は従業員のための生涯学習プログラムに投資しています。" },
+      { word: "critical thinking", phonetic: "/ˈkrɪtɪkl ˈθɪŋkɪŋ/", meaning: "批判的思考", tags: ["教育"], example: "The new curriculum emphasizes critical thinking over memorization.", exampleJa: "新しいカリキュラムは暗記よりも批判的思考を重視しています。" },
+      { word: "reskilling", phonetic: "/riːˈskɪlɪŋ/", meaning: "リスキリング（学び直し）", tags: ["教育","人事"], example: "The government allocated 1 trillion yen for reskilling initiatives.", exampleJa: "政府はリスキリング施策に1兆円を計上しました。" },
+    ],
+    script: { title: "Japan Overhauls Education System", text: "Japan's Ministry of Education has announced a comprehensive overhaul of the national curriculum, emphasizing critical thinking, digital literacy, and practical English skills. Starting next academic year, all elementary schools will introduce programming as a mandatory subject. The reform also includes a shift away from traditional memorization-based testing toward project-based assessment methods. Universities are facing pressure to improve employment outcomes as enrollment continues to decline. The government has also allocated significant funding for adult reskilling programs to help workers adapt to the changing economy.", blankCandidates: [{ w: "comprehensive", h: "(包括的な)" }, { w: "overhaul", h: "(大改革)" }, { w: "curriculum", h: "(カリキュラム)" }, { w: "critical thinking", h: "(批判的思考)" }, { w: "mandatory", h: "(必修の)" }, { w: "memorization", h: "(暗記)" }, { w: "assessment", h: "(評価)" }, { w: "enrollment", h: "(入学者数)" }, { w: "reskilling", h: "(リスキリング)" }, { w: "allocated", h: "(配分した)" }], quiz: [{ q: "What new subject becomes mandatory?", opts: ["English conversation", "Financial literacy", "Programming", "Data science"], ans: 2 }, { q: "What is the testing shift away from?", opts: ["Group work", "Memorization-based testing", "Online exams", "Oral presentations"], ans: 1 }, { q: "Why are universities under pressure?", opts: ["Budget cuts", "Low research output", "Declining enrollment", "Faculty shortages"], ans: 2 }], vocabList: [{ word: "overhaul", meaning: "大改革・見直し" }, { word: "mandatory", meaning: "必修の・義務の" }, { word: "memorization", meaning: "暗記" }, { word: "project-based", meaning: "プロジェクトベースの" }, { word: "employment outcomes", meaning: "就職実績" }] },
+    reading: { title: "Training Program Strategy", text: "Good afternoon. Let's discuss our employee development strategy for the coming fiscal year. Our skills gap analysis revealed that 40% of our workforce lacks proficiency in data analytics and AI tools.\n\nI recommend we launch a company-wide reskilling program in partnership with an online learning platform. The estimated cost is 200 million yen, but the expected productivity gains justify the investment. We project a 30% improvement in operational efficiency within two years.\n\nFor leadership development, I propose sending our top 20 managers to an executive MBA program. This will cost approximately 50 million yen but will build the leadership pipeline we desperately need.\n\nShall we vote on approving the total training budget of 250 million yen?", vocabList: [{ word: "skills gap analysis", meaning: "スキルギャップ分析" }, { word: "proficiency", meaning: "習熟度" }, { word: "reskilling program", meaning: "リスキリングプログラム" }, { word: "productivity gains", meaning: "生産性向上" }, { word: "leadership pipeline", meaning: "リーダー育成パイプライン" }, { word: "training budget", meaning: "研修予算" }], grammar: { point: "費用対効果の提示パターン", explain: "'The estimated cost is X, but the expected gains justify the investment'（推定費用はXだが、期待される成果が投資を正当化する）は予算承認会議で使える重要パターン。", examples: ["The estimated cost is 200 million yen.", "Expected productivity gains justify the investment.", "We project a 30% improvement within two years."] }, quiz: [{ q: "What percentage lacks data analytics skills?", opts: ["25%", "30%", "40%", "50%"], ans: 2 }, { q: "What improvement is projected?", opts: ["20%", "25%", "30%", "35%"], ans: 2 }, { q: "What is the total training budget?", opts: ["200 million yen", "220 million yen", "250 million yen", "300 million yen"], ans: 2 }], expressions: [{ expr: "Our analysis revealed that...", usage: "分析結果を報告する", eg: "Our analysis revealed that 40% lack key skills." }, { expr: "The expected gains justify the investment.", usage: "費用対効果を主張する", eg: "Productivity gains justify the 200 million yen cost." }, { expr: "Shall we vote on approving...?", usage: "採決を提案する", eg: "Shall we vote on approving this budget?" }] },
+  },
+  {
+    topic: "エネルギー政策",
+    words: [
+      { word: "nuclear power", phonetic: "/ˈnjuːkliər ˈpaʊər/", meaning: "原子力発電", tags: ["エネルギー"], example: "Japan is restarting several nuclear power plants.", exampleJa: "日本はいくつかの原子力発電所を再稼働しています。" },
+      { word: "energy security", phonetic: "/ˈenərdʒi sɪˈkjʊərɪti/", meaning: "エネルギー安全保障", tags: ["エネルギー","政治"], example: "Energy security is a top priority for the government.", exampleJa: "エネルギー安全保障は政府の最優先事項です。" },
+      { word: "decarbonization", phonetic: "/diːˌkɑːrbənaɪˈzeɪʃn/", meaning: "脱炭素化", tags: ["エネルギー","環境"], example: "Decarbonization targets require massive infrastructure investment.", exampleJa: "脱炭素化の目標は大規模なインフラ投資を必要とします。" },
+      { word: "offshore wind", phonetic: "/ˌɒfˈʃɔːr wɪnd/", meaning: "洋上風力発電", tags: ["エネルギー","環境"], example: "Japan plans to build 10 gigawatts of offshore wind capacity.", exampleJa: "日本は10ギガワットの洋上風力発電容量の建設を計画しています。" },
+      { word: "hydrogen fuel", phonetic: "/ˈhaɪdrədʒən fjuːəl/", meaning: "水素燃料", tags: ["エネルギー","技術"], example: "The company is developing hydrogen fuel cell vehicles.", exampleJa: "その会社は水素燃料電池車を開発しています。" },
+      { word: "energy mix", phonetic: "/ˈenərdʒi mɪks/", meaning: "エネルギーミックス（電源構成）", tags: ["エネルギー"], example: "Japan is diversifying its energy mix to reduce fossil fuel dependence.", exampleJa: "日本は化石燃料依存を減らすためにエネルギーミックスを多様化しています。" },
+      { word: "grid infrastructure", phonetic: "/ɡrɪd ˈɪnfrəˌstrʌktʃər/", meaning: "送電網インフラ", tags: ["エネルギー","インフラ"], example: "Upgrading grid infrastructure is essential for renewable integration.", exampleJa: "送電網インフラの改善は再生可能エネルギー統合に不可欠です。" },
+    ],
+    script: { title: "Japan Accelerates Clean Energy Transition", text: "Japan has unveiled an ambitious plan to achieve 50% renewable energy in its power mix by 2035. The strategy includes massive investment in offshore wind farms along the coast of Hokkaido and Kyushu. The government will also restart additional nuclear reactors under strict safety standards to ensure energy security. A new hydrogen supply chain is being developed to power industrial facilities and heavy transport. Critics argue that the timeline is too aggressive, but officials insist that climate commitments require bold action. The total investment is estimated at 150 trillion yen over the next decade.", blankCandidates: [{ w: "ambitious", h: "(野心的な)" }, { w: "renewable", h: "(再生可能な)" }, { w: "offshore wind", h: "(洋上風力)" }, { w: "nuclear", h: "(原子力の)" }, { w: "safety standards", h: "(安全基準)" }, { w: "hydrogen", h: "(水素)" }, { w: "industrial", h: "(産業の)" }, { w: "aggressive", h: "(強硬な)" }, { w: "commitments", h: "(公約)" }, { w: "estimated", h: "(推定される)" }], quiz: [{ q: "What is the renewable energy target?", opts: ["30%", "40%", "50%", "60%"], ans: 2 }, { q: "Where will offshore wind farms be built?", opts: ["Tokyo Bay", "Hokkaido and Kyushu", "Okinawa", "Shikoku"], ans: 1 }, { q: "What is the total estimated investment?", opts: ["100 trillion yen", "120 trillion yen", "150 trillion yen", "200 trillion yen"], ans: 2 }], vocabList: [{ word: "power mix", meaning: "電源構成" }, { word: "offshore wind farms", meaning: "洋上風力発電所" }, { word: "reactors", meaning: "原子炉" }, { word: "supply chain", meaning: "サプライチェーン" }, { word: "climate commitments", meaning: "気候変動への公約" }] },
+    reading: { title: "Energy Policy Review", text: "Let me begin today's energy policy review. Our company's carbon emissions decreased by 12% last year, but we're still short of our 2030 target of a 45% reduction.\n\nOur Osaka plant has successfully transitioned to 100% renewable electricity, saving 800 million yen annually in energy costs. I recommend we replicate this model at our remaining five facilities.\n\nRegarding transportation emissions, switching our delivery fleet to electric vehicles would require a 3 billion yen investment. However, fuel savings and carbon credit revenue would generate a positive ROI within four years.\n\nThe board also wants us to explore power purchase agreements with solar farms to lock in long-term energy prices. This would protect us from market volatility.\n\nLet me share the detailed financial projections.", vocabList: [{ word: "carbon emissions", meaning: "炭素排出量" }, { word: "transitioned to", meaning: "〜に移行した" }, { word: "replicate", meaning: "再現する" }, { word: "delivery fleet", meaning: "配送車両群" }, { word: "carbon credit", meaning: "カーボンクレジット" }, { word: "power purchase agreement", meaning: "電力購入契約（PPA）" }], grammar: { point: "実績と目標のギャップを示す", explain: "'decreased by 12%, but we're still short of our target of 45%'（12%減少したが目標45%にはまだ届いていない）は進捗報告で頻出のパターン。", examples: ["Emissions decreased by 12%, but we're short of our target.", "Our plant has successfully transitioned to 100% renewable.", "Fuel savings would generate a positive ROI within four years."] }, quiz: [{ q: "By how much did emissions decrease?", opts: ["8%", "10%", "12%", "15%"], ans: 2 }, { q: "How much does the Osaka plant save annually?", opts: ["500 million yen", "800 million yen", "1 billion yen", "1.5 billion yen"], ans: 1 }, { q: "When would EV investment show positive ROI?", opts: ["2 years", "3 years", "4 years", "5 years"], ans: 2 }], expressions: [{ expr: "I recommend we replicate this model at...", usage: "成功事例の横展開を提案", eg: "I recommend we replicate this at all facilities." }, { expr: "This would protect us from...", usage: "リスク回避策を説明", eg: "This would protect us from market volatility." }, { expr: "Let me share the detailed projections.", usage: "詳細データの提示を予告", eg: "Let me share the financial projections for Q4." }] },
+  },
+  {
+    topic: "防災・災害対策",
+    words: [
+      { word: "disaster preparedness", phonetic: "/dɪˈzæstər prɪˈpeərɪdnəs/", meaning: "防災対策", tags: ["防災"], example: "Disaster preparedness drills are conducted every September.", exampleJa: "防災訓練は毎年9月に実施されます。" },
+      { word: "evacuation plan", phonetic: "/ɪˌvækjʊˈeɪʃn plæn/", meaning: "避難計画", tags: ["防災"], example: "Every building must have a clear evacuation plan.", exampleJa: "全ての建物に明確な避難計画が必要です。" },
+      { word: "resilience", phonetic: "/rɪˈzɪliəns/", meaning: "レジリエンス（回復力）", tags: ["防災","ビジネス"], example: "Building urban resilience is essential for earthquake-prone regions.", exampleJa: "地震多発地域では都市のレジリエンス構築が不可欠です。" },
+      { word: "early warning system", phonetic: "/ˈɜːrli ˈwɔːrnɪŋ ˈsɪstəm/", meaning: "早期警報システム", tags: ["防災","IT"], example: "Japan's earthquake early warning system saved many lives.", exampleJa: "日本の地震早期警報システムは多くの命を救いました。" },
+      { word: "business continuity", phonetic: "/ˈbɪznɪs ˌkɒntɪˈnjuːɪti/", meaning: "事業継続（BCP）", tags: ["防災","ビジネス"], example: "All departments must update their business continuity plans.", exampleJa: "全部門が事業継続計画を更新する必要があります。" },
+      { word: "infrastructure damage", phonetic: "/ˈɪnfrəˌstrʌktʃər ˈdæmɪdʒ/", meaning: "インフラ被害", tags: ["防災"], example: "The typhoon caused severe infrastructure damage across the region.", exampleJa: "台風が地域全体に深刻なインフラ被害をもたらしました。" },
+      { word: "relief efforts", phonetic: "/rɪˈliːf ˈefərts/", meaning: "救援活動", tags: ["防災"], example: "International relief efforts provided critical aid to affected areas.", exampleJa: "国際的な救援活動が被災地に重要な支援を提供しました。" },
+    ],
+    script: { title: "Japan Upgrades Disaster Prevention Technology", text: "Japan has invested 500 billion yen in upgrading its disaster prevention infrastructure, including next-generation earthquake early warning systems powered by artificial intelligence. The new technology can detect seismic activity 30 seconds faster than conventional systems, providing crucial evacuation time. Coastal regions are receiving upgraded tsunami barriers and reinforced seawalls. The government has also launched a nationwide campaign to improve household disaster preparedness, distributing emergency supply kits to 10 million families. Experts praise Japan's approach as a global model for disaster resilience.", blankCandidates: [{ w: "invested", h: "(投資した)" }, { w: "upgrading", h: "(改善する)" }, { w: "earthquake", h: "(地震)" }, { w: "artificial intelligence", h: "(人工知能)" }, { w: "seismic", h: "(地震の)" }, { w: "evacuation", h: "(避難)" }, { w: "tsunami", h: "(津波)" }, { w: "reinforced", h: "(強化された)" }, { w: "preparedness", h: "(備え)" }, { w: "resilience", h: "(レジリエンス)" }], quiz: [{ q: "How much was invested in prevention?", opts: ["300 billion yen", "400 billion yen", "500 billion yen", "600 billion yen"], ans: 2 }, { q: "How much faster is the new warning system?", opts: ["10 seconds", "20 seconds", "30 seconds", "45 seconds"], ans: 2 }, { q: "How many families receive emergency kits?", opts: ["5 million", "8 million", "10 million", "15 million"], ans: 2 }], vocabList: [{ word: "seismic activity", meaning: "地震活動" }, { word: "tsunami barriers", meaning: "津波防壁" }, { word: "seawalls", meaning: "防波堤" }, { word: "household", meaning: "世帯・家庭" }, { word: "emergency supply kits", meaning: "防災用品キット" }] },
+    reading: { title: "BCP Review Meeting", text: "Thank you for attending our annual business continuity planning review. Last year's earthquake in the Noto Peninsula exposed several weaknesses in our contingency plans that we must address immediately.\n\nFirst, our backup data center took 48 hours to become operational — far exceeding our 4-hour recovery time objective. I recommend we migrate to a cloud-based disaster recovery solution that guarantees 99.99% uptime.\n\nSecond, only 35% of employees completed the emergency response training. We need to make this mandatory for all staff by Q2. Third, our supply chain risk assessment identified three single points of failure that could halt production.\n\nI'm requesting a supplementary budget of 300 million yen to implement these improvements. Can we discuss priorities?", vocabList: [{ word: "contingency plan", meaning: "緊急時対応計画" }, { word: "backup data center", meaning: "バックアップデータセンター" }, { word: "recovery time objective", meaning: "復旧時間目標（RTO）" }, { word: "disaster recovery", meaning: "災害復旧" }, { word: "single point of failure", meaning: "単一障害点" }, { word: "supplementary budget", meaning: "補正予算" }], grammar: { point: "問題と改善策の対比構文", explain: "'Our backup center took 48 hours — far exceeding our 4-hour objective'（バックアップセンターは48時間かかった — 目標の4時間を大幅に超過）のようにダッシュで問題点を強調する手法。", examples: ["It took 48 hours — far exceeding our 4-hour objective.", "Only 35% completed the training — we need 100%.", "Three single points of failure could halt production."] }, quiz: [{ q: "How long did the backup center take?", opts: ["12 hours", "24 hours", "36 hours", "48 hours"], ans: 3 }, { q: "What percentage completed emergency training?", opts: ["25%", "30%", "35%", "40%"], ans: 2 }, { q: "How much supplementary budget is requested?", opts: ["200 million yen", "250 million yen", "300 million yen", "350 million yen"], ans: 2 }], expressions: [{ expr: "...exposed several weaknesses that we must address.", usage: "問題点の発覚を報告する", eg: "The audit exposed weaknesses in our security." }, { expr: "I'm requesting a supplementary budget of...", usage: "追加予算を要求する", eg: "I'm requesting 300 million yen for improvements." }, { expr: "Can we discuss priorities?", usage: "優先順位の議論に移行する", eg: "Can we discuss priorities for the remaining budget?" }] },
+  },
+  {
+    topic: "宇宙産業",
+    words: [
+      { word: "space exploration", phonetic: "/speɪs ˌekspləˈreɪʃn/", meaning: "宇宙探査", tags: ["宇宙","科学"], example: "Japan's space exploration program has expanded significantly.", exampleJa: "日本の宇宙探査プログラムは大幅に拡大しました。" },
+      { word: "satellite", phonetic: "/ˈsætəlaɪt/", meaning: "人工衛星", tags: ["宇宙","IT"], example: "The company launched a new communication satellite.", exampleJa: "その会社は新しい通信衛星を打ち上げました。" },
+      { word: "rocket launch", phonetic: "/ˈrɒkɪt lɔːntʃ/", meaning: "ロケット打ち上げ", tags: ["宇宙"], example: "The rocket launch was successfully completed yesterday.", exampleJa: "ロケットの打ち上げは昨日成功裏に完了しました。" },
+      { word: "commercialization", phonetic: "/kəˌmɜːrʃəlaɪˈzeɪʃn/", meaning: "商業化・事業化", tags: ["宇宙","ビジネス"], example: "Commercialization of space technology is accelerating.", exampleJa: "宇宙技術の商業化が加速しています。" },
+      { word: "debris removal", phonetic: "/dəˈbriː rɪˈmuːvl/", meaning: "デブリ除去（宇宙ゴミ除去）", tags: ["宇宙","環境"], example: "A Japanese startup is pioneering space debris removal.", exampleJa: "日本のスタートアップが宇宙デブリ除去の先駆者となっています。" },
+      { word: "lunar mission", phonetic: "/ˈluːnər ˈmɪʃn/", meaning: "月面ミッション", tags: ["宇宙"], example: "JAXA announced its next lunar mission for 2027.", exampleJa: "JAXAは2027年の次の月面ミッションを発表しました。" },
+    ],
+    script: { title: "Japan's Space Industry Enters New Era", text: "Japan's space industry is entering a transformative era with the successful launch of the new H3 rocket. The vehicle can carry larger payloads at significantly reduced costs, making Japanese launch services competitive globally. JAXA has announced partnerships with NASA for an upcoming lunar exploration mission. Meanwhile, Japanese startups are leading innovation in space debris removal technology, attracting substantial international investment. The government projects that the domestic space industry will grow to 4 trillion yen by 2030, creating thousands of high-skilled jobs across the country.", blankCandidates: [{ w: "transformative", h: "(変革的な)" }, { w: "launch", h: "(打ち上げ)" }, { w: "payloads", h: "(積荷)" }, { w: "competitive", h: "(競争力のある)" }, { w: "partnerships", h: "(提携)" }, { w: "lunar", h: "(月の)" }, { w: "debris", h: "(デブリ)" }, { w: "substantial", h: "(相当な)" }, { w: "projects", h: "(予測する)" }, { w: "domestic", h: "(国内の)" }], quiz: [{ q: "What rocket was successfully launched?", opts: ["H2A", "H2B", "H3", "Epsilon"], ans: 2 }, { q: "Who is JAXA partnering with?", opts: ["ESA", "NASA", "SpaceX", "CNSA"], ans: 1 }, { q: "What is the projected industry size by 2030?", opts: ["2 trillion yen", "3 trillion yen", "4 trillion yen", "5 trillion yen"], ans: 2 }], vocabList: [{ word: "transformative", meaning: "変革的な" }, { word: "payloads", meaning: "積荷・ペイロード" }, { word: "launch services", meaning: "打ち上げサービス" }, { word: "space debris", meaning: "宇宙デブリ" }, { word: "high-skilled jobs", meaning: "高度人材の雇用" }] },
+    reading: { title: "New Business Development Meeting", text: "Good morning, team. Today I'd like to propose that we enter the satellite data analytics market. Our market research shows this sector will reach 800 billion yen by 2028, with a compound annual growth rate of 22%.\n\nOur competitive advantage lies in our existing AI and machine learning capabilities. By combining satellite imagery with our analytics platform, we can offer real-time monitoring services for agriculture, urban planning, and disaster prevention.\n\nThe initial investment required would be approximately 1.5 billion yen for satellite data licensing and platform development. We expect to break even within three years.\n\nI've already had preliminary discussions with two potential satellite data providers. Shall I prepare a formal business case for the board's review?", vocabList: [{ word: "satellite data analytics", meaning: "衛星データ解析" }, { word: "compound annual growth rate", meaning: "年平均成長率（CAGR）" }, { word: "competitive advantage", meaning: "競争優位性" }, { word: "satellite imagery", meaning: "衛星画像" }, { word: "break even", meaning: "損益分岐点に達する" }, { word: "business case", meaning: "事業計画書" }], grammar: { point: "新規事業提案の構文", explain: "'I'd like to propose that we enter...'（〜への参入を提案したい）→ 市場データ → 競争優位 → 投資額 → 回収見込み の順で提案を構成するのが定番。", examples: ["I'd like to propose that we enter this market.", "Our competitive advantage lies in our AI capabilities.", "We expect to break even within three years."] }, quiz: [{ q: "What is the projected market size by 2028?", opts: ["500 billion yen", "600 billion yen", "800 billion yen", "1 trillion yen"], ans: 2 }, { q: "What is the CAGR?", opts: ["15%", "18%", "20%", "22%"], ans: 3 }, { q: "When is break-even expected?", opts: ["2 years", "3 years", "4 years", "5 years"], ans: 1 }], expressions: [{ expr: "I'd like to propose that we enter...", usage: "新市場参入を提案する", eg: "I'd like to propose that we enter the EV market." }, { expr: "Our competitive advantage lies in...", usage: "競争優位を説明する", eg: "Our advantage lies in our brand recognition." }, { expr: "Shall I prepare a formal business case?", usage: "次のアクションを提案する", eg: "Shall I prepare a business case for the board?" }] },
+  },
+  {
+    topic: "食品・農業",
+    words: [
+      { word: "food security", phonetic: "/fuːd sɪˈkjʊərɪti/", meaning: "食料安全保障", tags: ["農業","政治"], example: "Japan's food security depends on stable agricultural imports.", exampleJa: "日本の食料安全保障は安定した農産物輸入に依存しています。" },
+      { word: "smart agriculture", phonetic: "/smɑːrt ˈæɡrɪˌkʌltʃər/", meaning: "スマート農業", tags: ["農業","IT"], example: "Smart agriculture uses IoT sensors to optimize crop yields.", exampleJa: "スマート農業はIoTセンサーを使い作物の収穫量を最適化します。" },
+      { word: "food self-sufficiency", phonetic: "/fuːd ˌself səˈfɪʃənsi/", meaning: "食料自給率", tags: ["農業","経済"], example: "Japan's food self-sufficiency rate remains below 40%.", exampleJa: "日本の食料自給率は40%未満にとどまっています。" },
+      { word: "organic farming", phonetic: "/ɔːrˈɡænɪk ˈfɑːrmɪŋ/", meaning: "有機農業", tags: ["農業","環境"], example: "Consumer demand for organic farming products is growing.", exampleJa: "有機農産物への消費者需要が拡大しています。" },
+      { word: "food waste", phonetic: "/fuːd weɪst/", meaning: "食品ロス", tags: ["環境","社会"], example: "Japan generates 5 million tons of food waste annually.", exampleJa: "日本は年間500万トンの食品ロスを生み出しています。" },
+      { word: "agricultural exports", phonetic: "/ˌæɡrɪˈkʌltʃərəl ˈekspɔːrts/", meaning: "農産物輸出", tags: ["農業","貿易"], example: "Agricultural exports hit a record 1.5 trillion yen.", exampleJa: "農産物輸出が過去最高の1.5兆円に達しました。" },
+      { word: "crop yield", phonetic: "/krɒp jiːld/", meaning: "作物収穫量", tags: ["農業"], example: "New varieties have improved crop yield by 20%.", exampleJa: "新品種により作物の収穫量が20%向上しました。" },
+    ],
+    script: { title: "Japan Tackles Food Security with Technology", text: "Japan is leveraging advanced technology to address growing concerns about food security. With the country's food self-sufficiency rate hovering around 38%, the government has launched a comprehensive strategy to boost domestic agricultural production. Smart farming techniques using drones and AI-powered sensors are being deployed across the country, increasing crop yields by up to 30%. Japan is also expanding its agricultural exports, which reached a record 1.5 trillion yen last year. Additionally, new regulations aim to reduce food waste by 50% before 2030 through improved distribution networks and consumer awareness campaigns.", blankCandidates: [{ w: "leveraging", h: "(活用する)" }, { w: "food security", h: "(食料安全保障)" }, { w: "self-sufficiency", h: "(自給率)" }, { w: "comprehensive", h: "(包括的な)" }, { w: "domestic", h: "(国内の)" }, { w: "deployed", h: "(展開された)" }, { w: "crop yields", h: "(作物収穫量)" }, { w: "agricultural exports", h: "(農産物輸出)" }, { w: "regulations", h: "(規制)" }, { w: "distribution", h: "(流通)" }], quiz: [{ q: "What is Japan's food self-sufficiency rate?", opts: ["32%", "35%", "38%", "42%"], ans: 2 }, { q: "By how much do smart farming techniques increase yields?", opts: ["15%", "20%", "25%", "30%"], ans: 3 }, { q: "What is the food waste reduction target?", opts: ["30%", "40%", "50%", "60%"], ans: 2 }], vocabList: [{ word: "leveraging", meaning: "活用する" }, { word: "self-sufficiency rate", meaning: "自給率" }, { word: "smart farming", meaning: "スマート農業" }, { word: "drones", meaning: "ドローン" }, { word: "awareness campaigns", meaning: "啓発キャンペーン" }] },
+    reading: { title: "Agricultural Business Expansion Meeting", text: "Welcome to our strategic planning meeting for the agricultural division. Our premium Japanese fruit exports to Southeast Asia have grown by 65% this year, exceeding all projections. The 'Japan Quality' brand is resonating strongly with affluent consumers.\n\nTo capitalize on this momentum, I propose we establish a cold chain logistics hub in Singapore. The estimated setup cost is 2 billion yen, but it would enable us to serve five additional markets within the region.\n\nHowever, we face a challenge: our domestic supply capacity is limited by the aging farmer population. We need to invest in automated harvesting technology and attract younger workers through competitive compensation packages.\n\nI'd like your feedback on whether we should prioritize the logistics hub or domestic capacity building.", vocabList: [{ word: "premium exports", meaning: "高級品輸出" }, { word: "cold chain logistics", meaning: "コールドチェーン物流" }, { word: "affluent consumers", meaning: "富裕層消費者" }, { word: "capitalize on", meaning: "〜を活かす" }, { word: "automated harvesting", meaning: "自動収穫" }, { word: "capacity building", meaning: "能力構築" }], grammar: { point: "トレードオフの提示", explain: "'I'd like your feedback on whether we should prioritize A or B'（AとBのどちらを優先すべきか意見を聞きたい）は戦略会議での選択肢提示の定番。", examples: ["Our exports have grown by 65%, exceeding all projections.", "The 'Japan Quality' brand is resonating with consumers.", "Should we prioritize the logistics hub or domestic capacity?"] }, quiz: [{ q: "By how much did fruit exports grow?", opts: ["45%", "55%", "65%", "75%"], ans: 2 }, { q: "Where is the logistics hub proposed?", opts: ["Bangkok", "Jakarta", "Singapore", "Kuala Lumpur"], ans: 2 }, { q: "What limits domestic supply capacity?", opts: ["Weather", "Technology", "Aging farmer population", "Regulations"], ans: 2 }], expressions: [{ expr: "To capitalize on this momentum,...", usage: "好機を活かす提案", eg: "To capitalize on this trend, we should expand now." }, { expr: "I'd like your feedback on whether we should prioritize...", usage: "優先順位について意見を求める", eg: "Should we prioritize growth or cost reduction?" }, { expr: "...is resonating strongly with...", usage: "好評を得ていることを伝える", eg: "Our new brand is resonating with younger consumers." }] },
+  },
+];
+
+// ===== OFFLINE CONTENT GENERATOR =====
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function createPartsFromScript(text, blankCandidates, numBlanks = 6) {
+  // Find positions of each candidate in the text
+  const withPos = blankCandidates.map(c => {
+    const idx = text.toLowerCase().indexOf(c.w.toLowerCase());
+    return { ...c, pos: idx };
+  }).filter(c => c.pos !== -1).sort((a, b) => a.pos - b.pos);
+
+  // Pick numBlanks, spread across the text
+  const step = Math.max(1, Math.floor(withPos.length / numBlanks));
+  const chosen = [];
+  for (let i = 0; i < withPos.length && chosen.length < numBlanks; i += step) {
+    chosen.push(withPos[i]);
+  }
+  // Fill remaining from unused
+  if (chosen.length < numBlanks) {
+    const used = new Set(chosen.map(c => c.w));
+    for (const c of shuffleArray(withPos)) {
+      if (chosen.length >= numBlanks) break;
+      if (!used.has(c.w)) { chosen.push(c); used.add(c.w); }
+    }
+    chosen.sort((a, b) => a.pos - b.pos);
+  }
+
+  const parts = [];
+  let remaining = text;
+  chosen.forEach((blank, id) => {
+    const idx = remaining.toLowerCase().indexOf(blank.w.toLowerCase());
+    if (idx === -1) return;
+    const actual = remaining.substring(idx, idx + blank.w.length);
+    parts.push({ text: remaining.substring(0, idx), blank: null });
+    parts.push({ text: "", blank: { id, answer: actual, hint: blank.h } });
+    remaining = remaining.substring(idx + actual.length);
+  });
+  if (remaining) parts.push({ text: remaining, blank: null });
+  return parts;
+}
+
+function createVocabQuiz(selected) {
+  const quizWords = shuffleArray([...selected]).slice(0, 3);
+  return quizWords.map(target => {
+    const distractors = shuffleArray(selected.filter(w => w.word !== target.word)).slice(0, 3);
+    const type = Math.random();
+    if (type < 0.33) {
+      const opts = shuffleArray([target, ...distractors]);
+      return { q: `「${target.meaning}」を英語で？`, opts: opts.map(o => o.word), ans: opts.indexOf(target) };
+    } else if (type < 0.66) {
+      const opts = shuffleArray([target, ...distractors]);
+      return { q: `What does '${target.word}' mean?`, opts: opts.map(o => o.meaning), ans: opts.indexOf(target) };
+    } else {
+      const opts = shuffleArray([target, ...distractors]);
+      const blank = target.example.replace(new RegExp(target.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '___');
+      return { q: `Complete: '${blank}'`, opts: opts.map(o => o.word), ans: opts.indexOf(target) };
+    }
+  });
+}
+
+function generateFromPool(usedTopicIndices = []) {
+  const allTopics = EXTRA_TOPICS;
+  // Prefer unused topics
+  let available = allTopics.map((t, i) => i).filter(i => !usedTopicIndices.includes(i));
+  if (available.length === 0) available = allTopics.map((t, i) => i);
+  const topicIdx = shuffleArray(available)[0];
+  const topic = allTopics[topicIdx];
+
+  // Pick 5 random words from pool (topic has 6-8)
+  const selectedWords = shuffleArray([...topic.words]).slice(0, 5);
+
+  // Generate vocab quiz
+  const vocabQuiz = createVocabQuiz(selectedWords);
+
+  // Create listening parts with random blank positions
+  const shuffledBlanks = shuffleArray([...topic.script.blankCandidates]);
+  const parts = createPartsFromScript(topic.script.text, shuffledBlanks, 6);
+
+  // Create training script (2-3 sentences from listening)
+  const sentences = topic.script.text.match(/[^.!?]+[.!?]+/g) || [topic.script.text];
+  const trainingScript = shuffleArray(sentences).slice(0, Math.min(4, sentences.length)).join(' ').trim();
+
+  return {
+    date_label: "🎲 生成",
+    topic: topic.topic,
+    _topicIdx: topicIdx,
+    vocabulary: selectedWords,
+    vocabQuiz,
+    listening: {
+      title: topic.script.title,
+      level: "Intermediate",
+      parts,
+      quiz: topic.script.quiz,
+      vocabList: topic.script.vocabList,
+    },
+    reading: topic.reading,
+    training: {
+      title: topic.script.title,
+      script: trainingScript,
+    },
+  };
+}
+
 // ===== TIMER HOOK =====
 function useTimer(initialSeconds) {
   const [seconds, setSeconds] = useState(initialSeconds);
@@ -1995,18 +2221,30 @@ function App() {
     setShowSettings(false);
   };
 
-  const handleUpdate = async () => {
-    if (!apiKey) {
-      setTempKey(apiKey);
-      setShowSettings(true);
-      return;
-    }
+  // Track used topics to avoid repeats
+  const [usedTopics, setUsedTopics] = useState([]);
+
+  // Offline generation (free, instant)
+  const handleUpdate = () => {
+    setError('');
+    const newData = generateFromPool(usedTopics);
+    setGeneratedData(newData);
+    setUsedTopics(prev => [...prev, newData._topicIdx]);
+    // Save to history
+    const updated = [{ date: new Date().toISOString(), data: newData }, ...genHistory].slice(0, 30);
+    setGenHistory(updated);
+    try { localStorage.setItem('de_gen_history', JSON.stringify(updated)); } catch {}
+    setTab(0);
+  };
+
+  // API generation (optional, higher quality)
+  const handleApiUpdate = async () => {
+    if (!apiKey) { setTempKey(''); setShowSettings(true); return; }
     setGenerating(true);
     setError('');
     try {
       const newData = await generateContent(apiKey);
       setGeneratedData(newData);
-      // Save to history (keep last 30)
       const updated = [{ date: new Date().toISOString(), data: newData }, ...genHistory].slice(0, 30);
       setGenHistory(updated);
       try { localStorage.setItem('de_gen_history', JSON.stringify(updated)); } catch {}
@@ -2077,7 +2315,7 @@ function App() {
       {generating && (
         <div className="generating-overlay">
           <div className="generating-spinner" />
-          <div className="generating-text">新しい問題を生成中...</div>
+          <div className="generating-text">AI で新しい問題を生成中...</div>
           <div className="generating-sub">Claude API でコンテンツを構築しています（10〜20秒）</div>
         </div>
       )}
@@ -2142,7 +2380,7 @@ function App() {
         {generatedData && (
           <div style={{marginTop:'16px',display:'flex',alignItems:'center',gap:'8px',padding:'8px 14px',background:'#f0f9ff',border:'1px solid #bae6fd',borderRadius:'8px',fontSize:'.8rem',color:'#0369a1'}}>
             <span>🤖</span>
-            <span style={{fontWeight:'600'}}>AI生成コンテンツ: {generatedData.topic}</span>
+            <span style={{fontWeight:'600'}}>{generatedData.date_label} コンテンツ: {generatedData.topic}</span>
             <button onClick={clearGenerated} style={{marginLeft:'auto',background:'none',border:'none',color:'#0369a1',cursor:'pointer',fontSize:'.75rem',textDecoration:'underline'}}>
               デフォルトに戻す
             </button>
@@ -2158,9 +2396,15 @@ function App() {
             </>
           )}
           <button className="update-btn" onClick={handleUpdate} disabled={generating}>
-            <span className={generating ? 'update-spin' : ''}>🔄</span>
-            {generating ? '生成中...' : '新しい問題を生成'}
+            🔄 新しい問題を生成
           </button>
+          {apiKey && (
+            <button className="update-btn" onClick={handleApiUpdate} disabled={generating}
+              style={{borderColor:'var(--primary)',color:'var(--primary)',background:'#eef2ff',fontSize:'.75rem',padding:'6px 10px'}}>
+              <span className={generating ? 'update-spin' : ''}>🤖</span>
+              {generating ? '生成中...' : 'AI生成'}
+            </button>
+          )}
         </div>
 
         {/* Progress Summary */}
